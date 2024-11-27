@@ -62,6 +62,7 @@ class KahukuraApplication {
             this.interactionHandler.handleInteraction(interaction as ChatInputCommandInteraction);
         });
 
+        // When a person joins a guild, this event will trigger which will fetch the verify command's ID and run that and the member information through handleJoin()
         this.client.on(Events.GuildMemberAdd, (member) => {
             let verifyCommandID;
 
