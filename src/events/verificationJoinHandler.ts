@@ -21,6 +21,6 @@ export default class VerificationJoinHandler {
 
 
 
-        member.user.send(`Kia ora ${member.user.displayName}, before you can interact within UniQ Te Herenga Waka, such as sending messages, you need to verify your account first.\nYou can run the ${verifyCommandID ? `</verify:${verifyCommandID}>` : "/verify"} command to get verified e hoa!`)
+        member.user.send(`Kia ora ${member.user.displayName}, before you can interact within UniQ Te Herenga Waka, such as sending messages, you need to verify your account first.\n\nTo get verified e hoa, please run the ${verifyCommandID ? `</verify:${verifyCommandID}>` : "/verify"} command!`)
     }
 }
