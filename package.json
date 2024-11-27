@@ -1,0 +1,41 @@
+{
+  "name": "kahukura-bot",
+  "version": "1.0.0",
+  "description": "UniQ's Kahukura (Rainbow) Bot to handle verification, moderation and logging.",
+  "main": "app.ts",
+  "scripts": {
+    "start": "ts-node src/app.ts",
+    "prettier": "pnpm exec prettier src/ --write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uniqthw/Kahukura-Bot.git"
+  },
+  "keywords": [
+    "bot",
+    "discord",
+    "ainbow",
+    "moderation-bot",
+    "uniq",
+    "verification-bot",
+    "kahukura"
+  ],
+  "author": "Carolina Mitchell",
+  "license": "AGPL-3.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/uniqthw/Kahukura-Bot/issues"
+  },
+  "homepage": "https://github.com/uniqthw/Kahukura-Bot#readme",
+  "packageManager": "pnpm@10.0.0-alpha.4+sha512.a766482ed7e5802db8966144e1de4918a71bc6b0f11d65d21fc719ce23fe6af38f527ae3b97e826f2378126f620b4d8950d1a990862c8666506cff017ee1d4cc",
+  "dependencies": {
+    "discord.js": "^14.16.3"
+  },
+  "devDependencies": {
+    "prettier": "3.4.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}
