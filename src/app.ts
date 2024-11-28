@@ -3,8 +3,8 @@
 import { Client, GatewayIntentBits, REST, Events, Snowflake, Routes, ChatInputCommandInteraction } from "discord.js";
 import settings from "../settings.json";
 
-import InteractionHandler from "./events/interactionHandler";
-import VerificationJoinHandler from "./events/verificationJoinHandler";
+import InteractionHandler from "./handler/interactionHandler";
+import VerificationJoinHandler from "./handler/verificationJoinHandler";
 
 class KahukuraApplication {
     private client: Client;
