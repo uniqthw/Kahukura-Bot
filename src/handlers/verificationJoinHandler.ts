@@ -19,16 +19,29 @@ export default class VerificationJoinHandler {
     /* 
         Allows an already verified member access to the server, otherwise, quarantines unverified users until they verify.
     */
-    async handleJoin(member: GuildMember, verifyCommandID: Snowflake | undefined): Promise<void> {
-        await member.roles.add(settings.discord.rolesID.unverified, "Initial user join, adding unverified role until verification check completes.")
+    async handleJoin(
+        member: GuildMember,
+        verifyCommandID: Snowflake | undefined
+    ): Promise<void> {
+        await member.roles.add(
+            settings.discord.rolesID.unverified,
+            "Initial user join, adding unverified role until verification check completes."
+        );
 
-        if ((await this.verificationCheck(member.user.id))) {
-            await member.roles.remove(settings.discord.rolesID.unverified, "User has already verified with their student or staff email.")
-        };
-    
+        if (await this.verificationCheck(member.user.id)) {
+            await member.roles.remove(
+                settings.discord.rolesID.unverified,
+                "User has already verified with their student or staff email."
+            );
+        }
+
         MongoDb.getInstance().insertVerificationUser(member.user.id);
 
-        const verifyCommand = verifyCommandID ? `</verify:${verifyCommandID}>` : "/verify";
-        member.user.send(`Kia ora ${member.user.displayName}, before you can interact within UniQ Te Herenga Waka, such as sending messages, you need to verify your account first.\n\nTo get verified e hoa, please run the ${verifyCommand} command!`)
+        const verifyCommand = verifyCommandID
+            ? `</verify:${verifyCommandID}>`
+            : "/verify";
+        member.user.send(
+            `Kia ora ${member.user.displayName}, before you can interact within UniQ Te Herenga Waka, such as sending messages, you need to verify your account first.\n\nTo get verified e hoa, please run the ${verifyCommand} command!`
+        );
     }
 }

@@ -7,13 +7,10 @@ import TermsCommand from "../commands/legal/terms";
 import PrivacyCommand from "../commands/legal/privacy";
 
 export default class InteractionHandler {
-    private commands: Command[]
+    private commands: Command[];
 
     constructor() {
-        this.commands = [
-            new TermsCommand(),
-            new PrivacyCommand()
-        ];
+        this.commands = [new TermsCommand(), new PrivacyCommand()];
     }
 
     getSlashCommands() {
@@ -26,7 +23,9 @@ export default class InteractionHandler {
         );
     }
 
-    async handleInteraction(interaction: ChatInputCommandInteraction): Promise<void> {
+    async handleInteraction(
+        interaction: ChatInputCommandInteraction
+    ): Promise<void> {
         /* 
             Handles any interactions sent from Discord API by seeing if the interaction executed is in the list of 
             commands defined by this.commands().
@@ -34,8 +33,10 @@ export default class InteractionHandler {
             If it is not, it returns a promise rejection. Otherwise, it executes the command and logs on success or error.
         */
 
-        const command = this.commands.find((command) => command.name === interaction.commandName);
-        
+        const command = this.commands.find(
+            (command) => command.name === interaction.commandName
+        );
+
         if (!command) return Promise.reject("Command not found.");
 
         command
@@ -44,8 +45,11 @@ export default class InteractionHandler {
                 console.log(
                     `Sucesfully executed command [/${interaction.commandName}]`,
                     {
-                      guild: { id: interaction.guildId, name: interaction.guild?.name },
-                      user: { name: interaction.user.globalName },
+                        guild: {
+                            id: interaction.guildId,
+                            name: interaction.guild?.name
+                        },
+                        user: { name: interaction.user.globalName }
                     }
                 );
             })
@@ -53,8 +57,11 @@ export default class InteractionHandler {
                 console.log(
                     `Error executing command [/${interaction.commandName}]: ${err}`,
                     {
-                      guild: { id: interaction.guildId, name: interaction.guild?.name },
-                      user: { name: interaction.user.globalName },
+                        guild: {
+                            id: interaction.guildId,
+                            name: interaction.guild?.name
+                        },
+                        user: { name: interaction.user.globalName }
                     }
                 );
             });

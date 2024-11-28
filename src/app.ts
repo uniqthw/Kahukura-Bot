@@ -1,6 +1,14 @@
 // Copyright (C) 2024 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
-import { Client, GatewayIntentBits, REST, Events, Snowflake, Routes, ChatInputCommandInteraction } from "discord.js";
+import {
+    Client,
+    GatewayIntentBits,
+    REST,
+    Events,
+    Snowflake,
+    Routes,
+    ChatInputCommandInteraction
+} from "discord.js";
 import settings from "../settings.json";
 
 import InteractionHandler from "./handlers/interactionHandler";
@@ -18,24 +26,26 @@ class KahukuraApplication {
         */
 
         this.client = new Client({
-            allowedMentions: { parse: [ "users" ] },
-            intents: [ GatewayIntentBits.Guilds ]
+            allowedMentions: { parse: ["users"] },
+            intents: [GatewayIntentBits.Guilds]
         });
 
         this.interactionHandler = new InteractionHandler();
         this.verificationJoinHandler = new VerificationJoinHandler();
         this.discordRestClient = new REST().setToken(settings.discord.token);
-    };
+    }
 
     start() {
         /* 
             Start discord.js client function.
         */
 
-        this.client.login(settings.discord.token)
+        this.client
+            .login(settings.discord.token)
             .then(() => {
                 this.addClientEventHandlers();
-                if (this.client.application?.id) this.registerSlashCommands(this.client.application.id);
+                if (this.client.application?.id)
+                    this.registerSlashCommands(this.client.application.id);
             })
             .catch((err) => {
                 console.error(err);
@@ -49,7 +59,9 @@ class KahukuraApplication {
 
         // Logs to console once the client connects and is ready
         this.client.on(Events.ClientReady, (bot) => {
-            console.log(`Connected to the Discord client as ${bot.user.username}#${bot.user.discriminator} (${bot.user.id}).`);
+            console.log(
+                `Connected to the Discord client as ${bot.user.username}#${bot.user.discriminator} (${bot.user.id}).`
+            );
         });
 
         // Error event handler, logs to console on error
@@ -59,15 +71,23 @@ class KahukuraApplication {
 
         // Receives any client interaction events and runs them through handleInteraction() in InteractionHandler
         this.client.on(Events.InteractionCreate, (interaction) => {
-            this.interactionHandler.handleInteraction(interaction as ChatInputCommandInteraction);
+            this.interactionHandler.handleInteraction(
+                interaction as ChatInputCommandInteraction
+            );
         });
 
         // When a person joins a guild, this event will trigger which will fetch the verify command's ID and run that and the member information through handleJoin()
         this.client.on(Events.GuildMemberAdd, (member) => {
             let verifyCommandID;
 
-            this.client.application?.commands.fetch()
-                .then(commands => verifyCommandID = commands.find(command => command.name === "verify")?.id)
+            this.client.application?.commands
+                .fetch()
+                .then(
+                    (commands) =>
+                        (verifyCommandID = commands.find(
+                            (command) => command.name === "verify"
+                        )?.id)
+                )
                 .catch(console.error);
 
             this.verificationJoinHandler.handleJoin(member, verifyCommandID);
@@ -83,14 +103,18 @@ class KahukuraApplication {
 
         this.discordRestClient
             .put(Routes.applicationCommands(clientID), {
-                body: commands,
+                body: commands
             })
             .then((data: any) => {
                 console.log(data);
-                console.log(`Successfully registered ${data.length} global application (/) commands.`);
+                console.log(
+                    `Successfully registered ${data.length} global application (/) commands.`
+                );
             })
             .catch((err) => {
-                console.error(`Error registering application (/) commands: ${err}`);
+                console.error(
+                    `Error registering application (/) commands: ${err}`
+                );
             });
     }
 }
