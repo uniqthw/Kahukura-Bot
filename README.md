@@ -1,6 +1,10 @@
 # Kahukura Bot
 Kia ora! This is the Discord bot used on UniQ Te Herenga Waka's Discord server. The purpose of this bot is to provide verification and moderation tools within the Discord server.
 
+* If you would like to contribute, please read our [CONTRIBUTING.md](https://github.com/uniqthw/Kahukura-Bot/blob/main/CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](https://github.com/uniqthw/Kahukura-Bot/blob/main/CODE_OF_CONDUCT.md).
+* If there is a security vulnerability, read our security policy at [SECURITY.md](https://github.com/uniqthw/Kahukura-Bot/blob/main/.github/SECURITY.md).
+
+
 ## Setup
 This will assume you know how to download and install Node.js, and setup MongoDB. To figure out how to do this, Google is your friend.
 
