@@ -3,8 +3,8 @@
 import { Client, GatewayIntentBits, REST, Events, Snowflake, Routes, ChatInputCommandInteraction } from "discord.js";
 import settings from "../settings.json";
 
-import InteractionHandler from "./handler/interactionHandler";
-import VerificationJoinHandler from "./handler/verificationJoinHandler";
+import InteractionHandler from "./handlers/interactionHandler";
+import VerificationJoinHandler from "./handlers/verificationJoinHandler";
 
 class KahukuraApplication {
     private client: Client;
@@ -18,13 +18,13 @@ class KahukuraApplication {
         */
 
         this.client = new Client({
-            allowedMentions: { parse: ["everyone", "roles", "users"] },
+            allowedMentions: { parse: [ "users" ] },
             intents: [ GatewayIntentBits.Guilds ]
         });
 
         this.interactionHandler = new InteractionHandler();
         this.verificationJoinHandler = new VerificationJoinHandler();
-        this.discordRestClient = new REST().setToken(settings.token);
+        this.discordRestClient = new REST().setToken(settings.discord.token);
     };
 
     start() {
@@ -32,7 +32,7 @@ class KahukuraApplication {
             Start discord.js client function.
         */
 
-        this.client.login(settings.token)
+        this.client.login(settings.discord.token)
             .then(() => {
                 this.addClientEventHandlers();
                 if (this.client.application?.id) this.registerSlashCommands(this.client.application.id);

@@ -1,4 +1,7 @@
 {
     "token": "",
-    "mongo": ""
+    "mongo": "",
+    "roles": {
+        "unverified": ""
+    }
 }
