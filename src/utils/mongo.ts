@@ -1,3 +1,5 @@
+// Copyright (C) 2024 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
+
 import { Db, MongoClient, ObjectId } from "mongodb";
 import settings from "../../settings.json";
 import { Snowflake } from "discord.js";
@@ -23,6 +25,7 @@ export default class MongoDb {
             _id: new ObjectId(id),
             email: undefined,
             verified: false,
+            banned: false,
             lastest_attempt: {
                 code: undefined,
                 timestamp: undefined
@@ -39,15 +42,9 @@ export default class MongoDb {
         return user;
     }
 
-    async updateVerificationUser() {
-        // uhhh think about this one
-        /* 
-        whether in this or not, verification will be required for initial /verify command when setting email, 
-        and when doing /verify afterwards on same account to update the code and timestamp
-
-        furthermore, if another account attempts to use same email, it will have to send an email, idk some form of unlinking process
-        that does not harm the other account if a bad faith actor attempts to unlink despite not having authority to do so
-    
-        */
+    async updateVerificationUserBanStatus(id: Snowflake, banned: DBVerificationUser["banned"]): Promise<void> {
+        await this.db.collection<DBVerificationUser>("verification").updateOne(new ObjectId(id), {
+            banned: banned
+        });
     }
 }

@@ -13,11 +13,13 @@ import settings from "../settings.json";
 
 import InteractionHandler from "./handlers/interactionHandler";
 import VerificationJoinHandler from "./handlers/verificationJoinHandler";
+import VerificationBanHandler from "./handlers/verificationBanHandler";
 
 class KahukuraApplication {
     private client: Client;
     private interactionHandler: InteractionHandler;
     private verificationJoinHandler: VerificationJoinHandler;
+    private verificationBanHandler: VerificationBanHandler;
     private discordRestClient: REST;
 
     constructor() {
@@ -32,6 +34,7 @@ class KahukuraApplication {
 
         this.interactionHandler = new InteractionHandler();
         this.verificationJoinHandler = new VerificationJoinHandler();
+        this.verificationBanHandler = new VerificationBanHandler();
         this.discordRestClient = new REST().setToken(settings.discord.token);
     }
 
@@ -78,6 +81,8 @@ class KahukuraApplication {
 
         // When a person joins a guild, this event will trigger which will fetch the verify command's ID and run that and the member information through handleJoin()
         this.client.on(Events.GuildMemberAdd, (member) => {
+            if (member.guild.id !== settings.discord.guildID) return;
+
             let verifyCommandID;
 
             this.client.application?.commands
@@ -92,6 +97,18 @@ class KahukuraApplication {
 
             this.verificationJoinHandler.handleJoin(member, verifyCommandID);
         });
+
+        this.client.on(Events.GuildBanAdd, (ban) => {
+            if (ban.guild.id !== settings.discord.guildID) return;
+
+            this.verificationBanHandler.handleBanAdd(ban.user);
+        });
+
+        this.client.on(Events.GuildBanRemove, (ban) => {
+            if (ban.guild.id !== settings.discord.guildID) return;
+
+            this.verificationBanHandler.handleBanRemove(ban.user);
+        })
     }
 
     registerSlashCommands(clientID: Snowflake) {

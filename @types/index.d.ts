@@ -15,8 +15,14 @@ export interface DBVerificationUser {
     _id: ObjectId;
     email: string | undefined;
     verified: boolean;
+    banned: boolean;
     lastest_attempt: {
         code: number | undefined;
         timestamp: number | undefined;
     }
+}
+
+export interface VerificationUserCheck {
+    verified: DBVerificationUser["verified"];
+    banned: DBVerificationUser["banned"];
 }
