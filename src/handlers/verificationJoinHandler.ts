@@ -14,7 +14,10 @@ export default class VerificationJoinHandler {
         const userExists = await MongoDb.getInstance().getVerificationUser(id);
 
         // Returns boolean for .verified and .banned depending on the entry in the DB. Returns false if entry undefined or null.
-        return { verified: userExists?.verified ? true : false, banned: userExists?.banned ? true : false };
+        return {
+            verified: userExists?.verified ? true : false,
+            banned: userExists?.banned ? true : false
+        };
     }
 
     /* 
@@ -35,8 +38,12 @@ export default class VerificationJoinHandler {
 
         // Check if a user is marked as banned in the database, and bans if they are
         if (verificationCheck.banned) {
-            member.user.send("E hoa, your account is flagged as banned in UniQ Te Herenga Waka's verification database. Please contact info@uniqthw.org.nz to appeal.")
-            await member.ban({ reason: "User's account is flaggeed as banned in the verification database." });
+            member.user.send(
+                "E hoa, your account is flagged as banned in UniQ Te Herenga Waka's verification database. Please contact info@uniqthw.org.nz to appeal."
+            );
+            await member.ban({
+                reason: "User's account is flaggeed as banned in the verification database."
+            });
             return;
         }
 

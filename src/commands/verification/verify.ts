@@ -16,7 +16,17 @@ if user not verified but email attached ensure that new email sent if been longe
 export default class VerifyCommand implements Command {
     name = "verify";
     description = "";
-    slashCommand = new SlashCommandBuilder().setName(this.name).setDescription(this.description);
+    slashCommand = (new SlashCommandBuilder()
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption((option) =>
+            option
+                .setName("email")
+                .setDescription(
+                    "Please input your @myvuw.ac.nz (Student) or @vuw.ac.nz (Staff) email."
+                )
+                .setRequired(true)
+        ) as SlashCommandBuilder);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {
         

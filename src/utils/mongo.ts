@@ -26,10 +26,7 @@ export default class MongoDb {
             email: undefined,
             verified: false,
             banned: false,
-            lastest_attempt: {
-                code: undefined,
-                timestamp: undefined
-            }
+            verificationData: undefined
         });
     }
 
@@ -42,9 +39,14 @@ export default class MongoDb {
         return user;
     }
 
-    async updateVerificationUserBanStatus(id: Snowflake, banned: DBVerificationUser["banned"]): Promise<void> {
-        await this.db.collection<DBVerificationUser>("verification").updateOne(new ObjectId(id), {
-            banned: banned
-        });
+    async updateVerificationUserBanStatus(
+        id: Snowflake,
+        banned: DBVerificationUser["banned"]
+    ): Promise<void> {
+        await this.db
+            .collection<DBVerificationUser>("verification")
+            .updateOne(new ObjectId(id), {
+                banned: banned
+            });
     }
 }

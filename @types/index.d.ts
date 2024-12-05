@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, Snowflake } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { ObjectId } from "mongodb";
 
 // Defines an interface for the types for command classes
@@ -16,9 +16,10 @@ export interface DBVerificationUser {
     email: string | undefined;
     verified: boolean;
     banned: boolean;
-    lastest_attempt: {
-        code: number | undefined;
-        timestamp: number | undefined;
+    verificationData: undefined | {
+        code: number;
+        expiresAt: number; // Unix timestamp in milliseconds
+        lastAttemptAt: number; // Unix timestamp in milliseconds
     }
 }
 

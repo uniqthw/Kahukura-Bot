@@ -9,27 +9,30 @@ export default class VerificationBanHandler {
     /* 
         Runs when a user is banned. If a user has a database entry in the database, it will update their banned flag to true.
     */
-    async handleBanAdd(
-        user: User
-    ): Promise<void> {
-        const verificationUser = await MongoDb.getInstance().getVerificationUser(user.id);
+    async handleBanAdd(user: User): Promise<void> {
+        const verificationUser =
+            await MongoDb.getInstance().getVerificationUser(user.id);
 
         if (!verificationUser || verificationUser.banned === true) return;
 
-        await MongoDb.getInstance().updateVerificationUserBanStatus(user.id, true);
+        await MongoDb.getInstance().updateVerificationUserBanStatus(
+            user.id,
+            true
+        );
     }
 
     /*
         Runs when a user is unbanned. If a user has a database entry in the database, it will update their banned flag to false.
     */
-    async handleBanRemove(
-        user: User
-    ): Promise<void> {
-        const verificationUser = await MongoDb.getInstance().getVerificationUser(user.id);
+    async handleBanRemove(user: User): Promise<void> {
+        const verificationUser =
+            await MongoDb.getInstance().getVerificationUser(user.id);
 
         if (!verificationUser || verificationUser.banned === false) return;
 
-        await MongoDb.getInstance().updateVerificationUserBanStatus(user.id, false);
+        await MongoDb.getInstance().updateVerificationUserBanStatus(
+            user.id,
+            false
+        );
     }
-
 }

@@ -108,7 +108,7 @@ class KahukuraApplication {
             if (ban.guild.id !== settings.discord.guildID) return;
 
             this.verificationBanHandler.handleBanRemove(ban.user);
-        })
+        });
     }
 
     registerSlashCommands(clientID: Snowflake) {
