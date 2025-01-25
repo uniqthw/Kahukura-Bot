@@ -26,7 +26,7 @@ export default class PrivacyCommand implements Command {
                     fields: [
                         {
                             name: "🗃️ Information we collect",
-                            value: "The personal information we collect from you is your contact information. You may opt-out of further information collection by leaving the Discord server.\n\nWe collect your personal information in order to:\n\n- verify that you are a student or staff member at Te Herenga Waka—Victoria University of Wellington; and\n- utilise the student or staff university email provided in verification to:\n  - internally cross-reference with our membership register for handling internal disputes and breaches of our Constitution, Bylaws, and Discord guidelines; and\n  - contact the university's Student Interest and Conflict Resolution team where harm occurs to another person (such as allegations of sexual violence and harassment); and\n  - where the student or staff member poses an immediate risk to the safety of themselves or others; and\n- record Discord account ID's and the content of edited and deleted messages for moderation purposes to ensure the safety and wellbeing of others; and\n- any other reasonable purposes."
+                            value: "The personal information we collect from you is your contact information. You may opt-out of further information collection by leaving the Discord server.\n\nWe collect your personal information in order to:\n\n- verify that you are a student or staff member at Te Herenga Waka—Victoria University of Wellington; and\n- utilise the student or staff university email provided in verification to:\n  - internally cross-reference with our membership register for handling internal disputes and breaches of our Constitution, Bylaws, and Discord guidelines; and\n  - contact the university's Student Interest and Conflict Resolution team where harm occurs to another person; and\n  - where the student or staff member poses an immediate risk to the safety of themselves or others; and\n- any other reasonable purposes."
                         },
                         {
                             name: "👥 Sharing of information",
@@ -34,7 +34,7 @@ export default class PrivacyCommand implements Command {
                         },
                         {
                             name: "ℹ️ Miscellaneous",
-                            value: "We keep your information safe by storing it in a secured database and only allowing the Vice-President (Administration and Finance) direct access to the database.\n\nYou have the right to ask for a copy of any personal information we hold about you, and to ask for it to be corrected if you think it is wrong. If you’d like to ask for a copy of your information, or to have it corrected, please contact us at info@uniqthw.org.nz."
+                            value: "We keep your information safe by storing it in a secured database and only allowing the Vice-President (Administration and Finance) direct access to the database.\n\nYou have the right to ask for a copy of any personal information we hold about you, and to ask for it to be corrected if you think it is wrong. If you'd like to ask for a copy of your information, or to have it corrected, please contact us at info@uniqthw.org.nz."
                         }
                     ]
                 }

@@ -10,7 +10,7 @@ export default class MongoDb {
     private db: Db;
 
     private constructor() {
-        const client = new MongoClient(settings.mongo_uri);
+        const client = new MongoClient(settings.mongo);
         client.connect();
         this.db = client.db();
     }
@@ -27,6 +27,17 @@ export default class MongoDb {
             verified: false,
             banned: false,
             verificationData: undefined
+        });
+    }
+
+    async updateVerificationUser(user: DBVerificationUser): Promise<void> {
+        await this.db.collection<DBVerificationUser>("verification").updateOne({ _id: new ObjectId(user._id) }, {
+            $set: {
+                email: user.email,
+                verified: user.verified,
+                banned: user.banned,
+                verificationData: user.verificationData
+            }
         });
     }
 
@@ -47,6 +58,6 @@ export default class MongoDb {
             .collection<DBVerificationUser>("verification")
             .updateOne(new ObjectId(id), {
                 banned: banned
-            });
+        });
     }
 }
