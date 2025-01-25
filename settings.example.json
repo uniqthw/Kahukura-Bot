@@ -1,7 +1,10 @@
 {
-    "token": "",
-    "mongo": "",
-    "roles": {
-        "unverified": ""
-    }
+    "discord": {
+        "token": "",
+        "guildID": "",
+        "rolesID": {
+            "unverified": ""
+        }
+    },
+    "mongo": ""
 }
