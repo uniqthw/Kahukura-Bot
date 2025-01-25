@@ -1,10 +1,19 @@
 {
     "discord": {
-        "token": "",
-        "guildID": "",
+        "token": "your-bot-token",
+        "guildID": "your-server-guildID",
         "rolesID": {
-            "unverified": ""
+            "unverified": "your-server-unverified-roleID"
         }
     },
-    "mongo": ""
+    "email": {
+        "host": "smtp.example.com",
+        "port": 587,
+        "secure": false,
+        "auth": {
+            "user": "no-reply@email.org.nz", 
+            "pass": "your-email-password" 
+        }
+    },
+    "mongo": "your-mongodb-uri"
 }
