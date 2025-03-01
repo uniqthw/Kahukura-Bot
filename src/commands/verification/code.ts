@@ -3,8 +3,8 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import MongoDb from "../../utils/mongo";
 import { ObjectId } from "mongodb";
 
-export default class ConfirmCommand implements Command {
-    name = "confirm";
+export default class CodeCommand implements Command {
+    name = "code";
     description = "Confirm your account verification with the code sent to your email.";
     slashCommand = (new SlashCommandBuilder()
         .setName(this.name)

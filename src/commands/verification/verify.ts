@@ -29,7 +29,7 @@ export default class VerifyCommand implements Command {
         // Check if the email is from @myvuw.ac.nz domain
         if (!email.endsWith("@myvuw.ac.nz")) {
             return interaction.editReply({
-                content: "Please use a valid @myvuw.ac.nz email address."
+                content: "Please use a valid @myvuw.ac.nz email address. If you are not a student at Te Herenga Waka—Victoria University of Wellington, you can request manual verification."
             });
         }
 

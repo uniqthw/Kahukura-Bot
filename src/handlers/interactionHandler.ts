@@ -5,12 +5,21 @@ import { Command } from "../../@types";
 
 import TermsCommand from "../commands/legal/terms";
 import PrivacyCommand from "../commands/legal/privacy";
+import VerifyCommand from "../commands/verification/verify";
+import CodeCommand from "../commands/verification/code";
+import LookupCommand from "../commands/verification/lookup";
 
 export default class InteractionHandler {
     private commands: Command[];
 
     constructor() {
-        this.commands = [new TermsCommand(), new PrivacyCommand()];
+        this.commands = [
+            new TermsCommand(), 
+            new PrivacyCommand(),
+            new VerifyCommand(),
+            new CodeCommand(),
+            new LookupCommand()
+        ];
     }
 
     getSlashCommands() {
