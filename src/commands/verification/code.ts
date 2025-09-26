@@ -1,7 +1,6 @@
 import { Command } from "../../../@types";
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import MongoDb from "../../utils/mongo";
-import { ObjectId } from "mongodb";
 
 export default class CodeCommand implements Command {
     name = "code";
@@ -47,7 +46,7 @@ export default class CodeCommand implements Command {
 
         // Verify the user in the database
         await MongoDb.getInstance().updateVerificationUser({
-            _id: new ObjectId(userId),
+            _id: userId,
             email: verificationUser.email,
             verified: true,
             banned: false,

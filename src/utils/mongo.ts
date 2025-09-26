@@ -1,6 +1,6 @@
 // Copyright (C) 2024 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
-import { Db, MongoClient, ObjectId } from "mongodb";
+import { Db, MongoClient } from "mongodb";
 import settings from "../../settings.json";
 import { Snowflake } from "discord.js";
 import { DBVerificationUser } from "../../@types";
@@ -22,7 +22,7 @@ export default class MongoDb {
 
     async insertVerificationUser(id: Snowflake): Promise<void> {
         await this.db.collection<DBVerificationUser>("verification").insertOne({
-            _id: new ObjectId(id),
+            _id: id,
             email: undefined,
             verified: false,
             banned: false,
@@ -31,14 +31,14 @@ export default class MongoDb {
     }
 
     async updateVerificationUser(user: DBVerificationUser): Promise<void> {
-        await this.db.collection<DBVerificationUser>("verification").updateOne({ _id: new ObjectId(user._id) }, {
+        await this.db.collection<DBVerificationUser>("verification").updateOne({ _id: user._id }, {
             $set: {
                 email: user.email,
                 verified: user.verified,
                 banned: user.banned,
                 verificationData: user.verificationData
             }
-        });
+        }, { upsert: true });
     }
 
     async getVerificationUser(
@@ -46,7 +46,14 @@ export default class MongoDb {
     ): Promise<DBVerificationUser | null> {
         const user = await this.db
             .collection<DBVerificationUser>("verification")
-            .findOne({ _id: new ObjectId(id) });
+            .findOne({ _id: id });
+        return user;
+    }
+
+    async getVerificationUserByEmail(email: string): Promise<DBVerificationUser | null> {
+        const user = await this.db
+            .collection<DBVerificationUser>("verification")
+            .findOne({ email: email });
         return user;
     }
 
@@ -56,8 +63,6 @@ export default class MongoDb {
     ): Promise<void> {
         await this.db
             .collection<DBVerificationUser>("verification")
-            .updateOne(new ObjectId(id), {
-                banned: banned
-        });
+            .updateOne({ _id: id }, { $set: { banned: banned } });
     }
 }

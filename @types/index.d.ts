@@ -1,5 +1,4 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { ObjectId } from "mongodb";
 
 // Defines an interface for the types for command classes
 export interface Command {
@@ -12,7 +11,8 @@ export interface Command {
 
 // Defined an interface for the types for the verification collection in the database (users attempting to verify)
 export interface DBVerificationUser {
-    _id: ObjectId;
+    // Use Discord Snowflake string IDs for _id instead of MongoDB ObjectId.
+    _id: string;
     email: string | undefined;
     verified: boolean;
     banned: boolean;

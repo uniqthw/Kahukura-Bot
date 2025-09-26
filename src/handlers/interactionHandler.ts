@@ -8,6 +8,7 @@ import PrivacyCommand from "../commands/legal/privacy";
 import VerifyCommand from "../commands/verification/verify";
 import CodeCommand from "../commands/verification/code";
 import LookupCommand from "../commands/verification/lookup";
+import ManualVerifyCommand from "../commands/verification/manualVerify";
 
 export default class InteractionHandler {
     private commands: Command[];
@@ -18,7 +19,8 @@ export default class InteractionHandler {
             new PrivacyCommand(),
             new VerifyCommand(),
             new CodeCommand(),
-            new LookupCommand()
+            new LookupCommand(),
+            new ManualVerifyCommand()
         ];
     }
 

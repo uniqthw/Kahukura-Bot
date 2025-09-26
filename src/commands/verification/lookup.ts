@@ -1,7 +1,6 @@
 import { Command } from "../../../@types";
 import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionsBitField } from "discord.js";
 import MongoDb from "../../utils/mongo";
-import { ObjectId } from "mongodb";
 
 export default class LookupCommand implements Command {
     name = "lookup";

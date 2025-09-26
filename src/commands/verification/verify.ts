@@ -1,7 +1,6 @@
 import { Command } from "../../../@types";
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import MongoDb from "../../utils/mongo";
-import { ObjectId } from "mongodb";
 import { createTransport } from "nodemailer";
 import settings from "../../../settings.json";
 
@@ -36,13 +35,13 @@ export default class VerifyCommand implements Command {
         // Generate a new verification code
         const verificationCode = this.generateVerificationCode();
 
-        // Check if the email is already associated with another user
-        const existingUser = await MongoDb.getInstance().getVerificationUser(email);
+    // Check if the email is already associated with another user
+    const existingUser = await MongoDb.getInstance().getVerificationUserByEmail(email);
         if (existingUser) {
             if (existingUser.banned) {
                 // If the existing user is banned, ban the current user and set the email as unverified
                 await MongoDb.getInstance().updateVerificationUser({
-                    _id: new ObjectId(userId),
+                    _id: userId,
                     email: email,
                     verified: false,
                     banned: true,
@@ -55,7 +54,7 @@ export default class VerifyCommand implements Command {
                 // If the existing user is not banned, set the email as unverified and send a verification code
                 await this.sendVerificationEmail(email, verificationCode);
                 await MongoDb.getInstance().updateVerificationUser({
-                    _id: new ObjectId(userId),
+                    _id: userId,
                     email: email,
                     verified: false,
                     banned: false,
@@ -74,7 +73,7 @@ export default class VerifyCommand implements Command {
         // If the email does not exist on any account, send a verification email and update the database
         await this.sendVerificationEmail(email, verificationCode);
         await MongoDb.getInstance().updateVerificationUser({
-            _id: new ObjectId(userId),
+            _id: userId,
             email: email,
             verified: false,
             banned: false,
