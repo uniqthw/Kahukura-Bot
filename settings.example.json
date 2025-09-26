@@ -4,6 +4,9 @@
         "guildID": "your-server-guildID",
         "rolesID": {
             "unverified": "your-server-unverified-roleID"
+        },
+        "channelsID": {
+            "unverified": "your-server-unverified-channelID"
         }
     },
     "email": {

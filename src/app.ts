@@ -29,7 +29,7 @@ class KahukuraApplication {
 
         this.client = new Client({
             allowedMentions: { parse: ["users"] },
-            intents: [GatewayIntentBits.Guilds]
+            intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildModeration, GatewayIntentBits.GuildMessages]
         });
 
         this.interactionHandler = new InteractionHandler();
@@ -81,6 +81,7 @@ class KahukuraApplication {
 
         // When a person joins a guild, this event will trigger which will fetch the verify command's ID and run that and the member information through handleJoin()
         this.client.on(Events.GuildMemberAdd, (member) => {
+            console.log("test")
             if (member.guild.id !== settings.discord.guildID) return;
 
             let verifyCommandID;
@@ -96,6 +97,16 @@ class KahukuraApplication {
                 .catch(console.error);
 
             this.verificationJoinHandler.handleJoin(member, verifyCommandID);
+        });
+
+        this.client.on(Events.MessageCreate, async (message) => {
+            if (message.author.bot || settings.discord.channelsID.unverified) return;
+            
+            try {
+                await message.delete();
+            } catch (error) {
+                console.error("Failed to delete message in unverified channel: ", error);
+            }
         });
 
         this.client.on(Events.GuildBanAdd, (ban) => {

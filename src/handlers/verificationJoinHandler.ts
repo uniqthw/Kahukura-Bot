@@ -4,8 +4,16 @@ import { GuildMember, Snowflake } from "discord.js";
 import settings from "../../settings.json";
 import MongoDb from "../utils/mongo";
 import { VerificationUserCheck } from "../../@types";
+import DirectMessageHandler from "./directMessageHandler";
 
 export default class VerificationJoinHandler {
+
+    private directMessageHandler: DirectMessageHandler;
+
+    constructor() {
+        this.directMessageHandler = new DirectMessageHandler();
+    }
+
     /*
         Checks if a user with the ID specified has already previously verified or banned.
     */
@@ -38,12 +46,15 @@ export default class VerificationJoinHandler {
 
         // Check if a user is marked as banned in the database, and bans if they are
         if (verificationCheck.banned) {
-            member.user.send(
-                "E hoa, your account is flagged as banned in UniQ Te Herenga Waka's verification database. Please contact info@uniqthw.org.nz to appeal."
-            );
+            this.directMessageHandler.handleMessage(member, {
+                content: `E hoa, your account is flagged as banned in UniQ Te Herenga Waka's verification database. Please contact info@uniqthw.org.nz to appeal.`,
+                allowedMentions: { users: [member.id] }
+            }, false);
+
             await member.ban({
-                reason: "User's account is flaggeed as banned in the verification database."
+                reason: "User's account is flagged as banned in the verification database."
             });
+
             return;
         }
 
@@ -61,8 +72,9 @@ export default class VerificationJoinHandler {
             ? `</verify:${verifyCommandID}>`
             : "/verify";
 
-        member.user.send(
-            `Kia ora ${member.user.displayName}, before you can interact within UniQ Te Herenga Waka, such as sending messages, you need to verify your account first.\n\nTo get verified e hoa, please run the ${verifyCommand} command!`
-        );
+        await this.directMessageHandler.handleMessage(member, {
+            content: `Kia ora ${member.user.displayName}, before you can interact within UniQ Te Herenga Waka, such as sending messages, you need to verify your account first.\n\nTo get verified e hoa, please run the ${verifyCommand} command!`,
+            allowedMentions: { users: [member.id] }
+        }, true);
     }
 }
