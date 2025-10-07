@@ -37,7 +37,7 @@
     "@types/nodemailer": "^6.4.17",
     "discord.js": "^14.22.1",
     "mongodb": "^6.11.0",
-    "nodemailer": "^6.10.0"
+    "nodemailer": "^7.0.7"
   },
   "devDependencies": {
     "prettier": "3.4.1",

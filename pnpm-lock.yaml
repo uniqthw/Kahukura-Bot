@@ -18,8 +18,8 @@ importers:
         specifier: ^6.11.0
         version: 6.11.0
       nodemailer:
-        specifier: ^6.10.0
-        version: 6.10.0
+        specifier: ^7.0.7
+        version: 7.0.7
     devDependencies:
       prettier:
         specifier: 3.4.1
@@ -139,6 +139,7 @@ packages:
   bson@6.10.0:
     resolution: {integrity: sha512-ROchNosXMJD2cbQGm84KoP7vOGPO6/bOAW0veMMbzhXLqoZptcaYRVLitwvuhwhjjpU1qP4YZRWLhgETdgqUQw==}
     engines: {node: '>=16.20.1'}
+    deprecated: a critical bug affecting only useBigInt64=true deserialization usage is fixed in bson@6.10.3
 
   create-require@1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
@@ -202,8 +203,8 @@ packages:
       socks:
         optional: true
 
-  nodemailer@6.10.0:
-    resolution: {integrity: sha512-SQ3wZCExjeSatLE/HBaXS5vqUOQk6GtBdIIKxiFdmm01mOQZX/POJkO3SUX1wDiYcwUOJwT23scFSC9fY2H8IA==}
+  nodemailer@7.0.7:
+    resolution: {integrity: sha512-jGOaRznodf62TVzdyhKt/f1Q/c3kYynk8629sgJHpRzGZj01ezbgMMWJSAjHADcwTKxco3B68/R+KHJY2T5BaA==}
     engines: {node: '>=6.0.0'}
 
   prettier@3.4.1:
@@ -449,7 +450,7 @@ snapshots:
       bson: 6.10.0
       mongodb-connection-string-url: 3.0.1
 
-  nodemailer@6.10.0: {}
+  nodemailer@7.0.7: {}
 
   prettier@3.4.1: {}
 
