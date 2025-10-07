@@ -9,6 +9,7 @@ import VerifyCommand from "../commands/verification/verify";
 import CodeCommand from "../commands/verification/code";
 import LookupCommand from "../commands/verification/lookup";
 import ManualVerifyCommand from "../commands/verification/manualVerify";
+import DeleteUserData from "../commands/itadmin/deleteUserData";
 
 export default class InteractionHandler {
     private commands: Command[];
@@ -20,7 +21,8 @@ export default class InteractionHandler {
             new VerifyCommand(),
             new CodeCommand(),
             new LookupCommand(),
-            new ManualVerifyCommand()
+            new ManualVerifyCommand(),
+            new DeleteUserData()
         ];
     }
 

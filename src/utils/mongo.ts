@@ -65,4 +65,10 @@ export default class MongoDb {
             .collection<DBVerificationUser>("verification")
             .updateOne({ _id: id }, { $set: { banned: banned } });
     }
+
+    async deleteVerificationUserData(id: Snowflake): Promise<void> {
+        await this.db
+            .collection<DBVerificationUser>("verification")
+            .deleteOne({ _id: id });
+    }
 }

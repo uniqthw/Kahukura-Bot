@@ -6,6 +6,7 @@
   "scripts": {
     "start": "ts-node src/app.ts",
     "pretty": "pnpm exec prettier src/ --write",
+    "test-mongo": "ts-node scripts/test_mongo.ts",
     "test-email": "ts-node scripts/send_test_email.ts",
     "test-email-oauth": "ts-node scripts/send_test_email_oauth.ts"
   },
