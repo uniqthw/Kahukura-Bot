@@ -29,7 +29,7 @@ export async function handleGuildMemberAdd(member: GuildMember): Promise<void> {
             const unverifiedChannel = member.guild.channels.cache.get(unverifiedChannelId);
             if (unverifiedChannel?.isTextBased()) {
                 await unverifiedChannel.send(
-                    `Welcome ${member}! \n\nBefore you can interact within UniQ Te Herenga Waka, such as sending messages, you need to verify your account first.\n\nPlease verify your account using \`/verify your-email@myvuw.ac.nz\` to access the server.`
+                    `Welcome ${member}! \n\nPlease verify your account using \`/verify your-email@myvuw.ac.nz\` to access the server.`
                 );
             }
         }
