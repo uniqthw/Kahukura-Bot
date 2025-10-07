@@ -5,6 +5,18 @@ import settings from "../../settings.json";
 import { Snowflake } from "discord.js";
 import { DBVerificationUser } from "../../@types";
 
+export interface ModLogEntry {
+    action: string;
+    targetId: string;
+    targetTag: string;
+    moderatorId: string;
+    moderatorTag: string;
+    reason: string;
+    duration?: number;
+    timestamp: number;
+    guildId: string;
+}
+
 export default class MongoDb {
     private static instance: MongoDb;
     private db: Db;
@@ -70,5 +82,20 @@ export default class MongoDb {
         await this.db
             .collection<DBVerificationUser>("verification")
             .deleteOne({ _id: id });
+    }
+
+    // Moderation Log Methods
+    async insertModLog(entry: ModLogEntry): Promise<void> {
+        await this.db.collection<ModLogEntry>("modlogs").insertOne(entry);
+    }
+
+    async getModLogs(targetId?: string, limit: number = 10): Promise<ModLogEntry[]> {
+        const query = targetId ? { targetId } : {};
+        const logs = await this.db.collection<ModLogEntry>("modlogs")
+            .find(query)
+            .sort({ timestamp: -1 })
+            .limit(limit)
+            .toArray();
+        return logs;
     }
 }
