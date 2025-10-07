@@ -10,6 +10,7 @@ export default class LockCommand implements Command {
     slashCommand = (new SlashCommandBuilder()
         .setName(this.name)
         .setDescription(this.description)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
         .addStringOption(option =>
             option.setName("reason").setDescription("Reason for locking channel").setRequired(false)
         ) as SlashCommandBuilder);

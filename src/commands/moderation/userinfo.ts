@@ -1,5 +1,5 @@
 import { Command } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, EmbedBuilder } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, EmbedBuilder, PermissionFlagsBits } from "discord.js";
 import { hasModeratorRole } from "../../utils/modRoleCheck";
 import { getModLogs } from "../../utils/modlog";
 import MongoDb from "../../utils/mongo";
@@ -11,6 +11,7 @@ export default class UserinfoCommand implements Command {
     slashCommand = (new SlashCommandBuilder()
         .setName(this.name)
         .setDescription(this.description)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
         .addUserOption(option =>
             option.setName("user").setDescription("User to view info for").setRequired(true)
         ) as SlashCommandBuilder);

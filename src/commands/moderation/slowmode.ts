@@ -1,5 +1,5 @@
 import { Command } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, TextChannel } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, TextChannel, PermissionFlagsBits } from "discord.js";
 import { hasModeratorRole } from "../../utils/modRoleCheck";
 import { logModAction } from "../../utils/modlog";
 import settings from "../../../settings.json";
@@ -10,6 +10,7 @@ export default class SlowmodeCommand implements Command {
     slashCommand = (new SlashCommandBuilder()
         .setName(this.name)
         .setDescription(this.description)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
         .addIntegerOption(option =>
             option.setName("seconds").setDescription("Slowmode interval in seconds (0 to disable)").setRequired(true)
         )

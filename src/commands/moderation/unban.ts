@@ -1,5 +1,5 @@
 import { Command } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, PermissionFlagsBits } from "discord.js";
 import { hasModeratorRole } from "../../utils/modRoleCheck";
 import { logModAction } from "../../utils/modlog";
 import settings from "../../../settings.json";
@@ -10,6 +10,7 @@ export default class UnbanCommand implements Command {
     slashCommand = (new SlashCommandBuilder()
         .setName(this.name)
         .setDescription(this.description)
+        .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
         .addStringOption(option =>
             option.setName("user_id").setDescription("User ID to unban").setRequired(true)
         )
