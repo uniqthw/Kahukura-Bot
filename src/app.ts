@@ -14,6 +14,7 @@ import settings from "../settings.json";
 import InteractionHandler from "./handlers/interactionHandler";
 import VerificationJoinHandler from "./handlers/verificationJoinHandler";
 import VerificationBanHandler from "./handlers/verificationBanHandler";
+import { handleGuildMemberAdd } from "./events/guildMemberAdd";
 
 class KahukuraApplication {
     private client: Client;
@@ -79,24 +80,9 @@ class KahukuraApplication {
             );
         });
 
-        // When a person joins a guild, this event will trigger which will fetch the verify command's ID and run that and the member information through handleJoin()
+        // When a person joins a guild, this event will trigger which will add the unverified role
         this.client.on(Events.GuildMemberAdd, (member) => {
-            console.log("test")
-            if (member.guild.id !== settings.discord.guildID) return;
-
-            let verifyCommandID;
-
-            this.client.application?.commands
-                .fetch()
-                .then(
-                    (commands) =>
-                        (verifyCommandID = commands.find(
-                            (command) => command.name === "verify"
-                        )?.id)
-                )
-                .catch(console.error);
-
-            this.verificationJoinHandler.handleJoin(member, verifyCommandID);
+            handleGuildMemberAdd(member);
         });
 
         this.client.on(Events.MessageCreate, async (message) => {

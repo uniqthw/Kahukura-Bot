@@ -65,7 +65,7 @@ export default class VerifyCommand implements Command {
                     }
                 });
                 return interaction.editReply({
-                    content: "A verification email has been sent to your university email address."
+                    content: "A verification email has been sent to your university email address. Please check your email and use `/code <your-code>` to complete verification."
                 });
             }
         }
@@ -85,7 +85,7 @@ export default class VerifyCommand implements Command {
         });
 
         return interaction.editReply({
-            content: "A verification email has been sent to your university email address."
+            content: "A verification email has been sent to your university email address. Please check your email and use `/code <your-code>` to complete verification."
         });
     }
 

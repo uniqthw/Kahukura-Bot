@@ -1,6 +1,7 @@
 import { Command } from "../../../@types";
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import MongoDb from "../../utils/mongo";
+import settings from "../../../settings.json";
 
 export default class CodeCommand implements Command {
     name = "code";
@@ -58,9 +59,11 @@ export default class CodeCommand implements Command {
         if (guild) {
             const member = await guild.members.fetch(userId);
             if (member) {
-                const unverifiedRole = guild.roles.cache.find(role => role.name === "Unverified");
-                if (unverifiedRole) {
+                const unverifiedRoleId = settings.discord.rolesID.unverified;
+                const unverifiedRole = guild.roles.cache.get(unverifiedRoleId);
+                if (unverifiedRole && member.roles.cache.has(unverifiedRoleId)) {
                     await member.roles.remove(unverifiedRole);
+                    console.log(`Removed unverified role from ${member.user.tag} (${member.id})`);
                 }
             }
         }
