@@ -1,0 +1,46 @@
+name: Bug report
+description: Report an issue with the Kahukura Bot.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for filing an issue! If  your concern is regarding your personal information, please do not file it here. Instead, contact us directly at [itadmin@uniqthw.org.nz](mailto:itadmin@uniqthw.org.nz).
+  - type: textarea
+    id: description
+    attributes:
+      label: Description of the issue
+      description: Please concisely explain the issue in a sentence or two.
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Observed behaviour
+      description: Outline in as much detail as possible the behaviour you have observed in relation to the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Expected behaviour
+      description: Outline in as much detail as possible the behaviour you have expect/what you think should happen instead of the observed problematic behaviour.
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Steps to reproduce
+      description: Provide the steps to reproduce the issue in as much detail as possible.
+      placeholder: |
+        Steps to reproduc:
+        1. Do thing
+        2. Observe behavior
+        3. See error logs below
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Additional information
+      description: Please please provide any additional information you think may be relevant to this issue, such as error messages, screenshots, log files, etc. Please remember to omit any personal information from this.
