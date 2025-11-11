@@ -34,14 +34,14 @@
   "homepage": "https://github.com/uniqthw/Kahukura-Bot#readme",
   "packageManager": "pnpm@10.0.0-beta.0+sha512.5935e74d6e69a7500c443e7e4f6b7378b7612f0b6dfe7c5cb785d5be4bbe0f7f8a301d5eeb68c4aa7c7d04f95126eef539011e93991a88aba0cb8f6f07fc951d",
   "dependencies": {
-    "@types/nodemailer": "^6.4.17",
-    "discord.js": "^14.22.1",
-    "mongodb": "^6.11.0",
-    "nodemailer": "^6.10.0"
+    "@types/nodemailer": "^7.0.3",
+    "discord.js": "^14.24.2",
+    "mongodb": "^7.0.0",
+    "nodemailer": "^7.0.10"
   },
   "devDependencies": {
-    "prettier": "3.4.1",
+    "prettier": "3.6.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.9.3"
   }
 }
