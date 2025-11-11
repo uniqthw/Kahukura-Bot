@@ -1,4 +1,4 @@
-// Copyright (C) 2024 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
+// Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
 import { ChatInputCommandInteraction } from "discord.js";
 import { Command } from "../../@types";
@@ -36,20 +36,20 @@ export default class InteractionHandler {
             new CodeCommand(),
             new LookupCommand(),
             new ManualVerifyCommand(),
-            new DeleteUserData(),
+            // new DeleteUserData(),
             // Moderation Commands
-            new BanCommand(),
-            new UnbanCommand(),
-            new KickCommand(),
-            new MuteCommand(),
-            new UnmuteCommand(),
-            new WarnCommand(),
-            new PurgeCommand(),
-            new LockCommand(),
-            new UnlockCommand(),
-            new SlowmodeCommand(),
-            new ModlogsCommand(),
-            new UserinfoCommand()
+            // new BanCommand(),
+            // new UnbanCommand(),
+            // new KickCommand(),
+            // new MuteCommand(),
+            // new UnmuteCommand(),
+            // new WarnCommand(),
+            // new PurgeCommand(),
+            // new LockCommand(),
+            // new UnlockCommand(),
+            // new SlowmodeCommand(),
+            // new ModlogsCommand(),
+            // new UserinfoCommand()
         ];
     }
 

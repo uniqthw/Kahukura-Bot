@@ -1,4 +1,4 @@
-// Copyright (C) 2024 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
+// Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
 import { GuildMember, Snowflake } from "discord.js";
 import settings from "../../settings.json";
@@ -67,13 +67,13 @@ export default class VerificationJoinHandler {
             return;
         }
 
-        // If a user is not verified, keep them quarantined and send them a DM asking them to verify
+        // If a user is not verified, keep them quarantined and send them a DM (or a message in a channel) asking them to verify
         const verifyCommand = verifyCommandID
             ? `</verify:${verifyCommandID}>`
             : "/verify";
 
         await this.directMessageHandler.handleMessage(member, {
-            content: `Kia ora ${member.user.displayName}, before you can interact within UniQ Te Herenga Waka, such as sending messages, you need to verify your account first.\n\nTo get verified e hoa, please run the ${verifyCommand} command!`,
+            content: `Kia ora <@${member.user.id}>, before you can interact within UniQ Te Herenga Waka, such as sending messages, you need to verify your account first.\n\nTo get verified e hoa, please run the ${verifyCommand} command!`,
             allowedMentions: { users: [member.id] }
         }, true);
     }

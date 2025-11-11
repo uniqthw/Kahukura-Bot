@@ -1,3 +1,5 @@
+// Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
+
 import { Command } from "../../../@types";
 import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionsBitField } from "discord.js";
 import MongoDb from "../../utils/mongo";

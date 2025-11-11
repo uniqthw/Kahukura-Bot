@@ -14,6 +14,7 @@ export interface DBVerificationUser {
     // Use Discord Snowflake string IDs for _id instead of MongoDB ObjectId.
     _id: string;
     email: string | undefined;
+    oldEmail?: string | undefined;
     verified: boolean;
     banned: boolean;
     verificationData: undefined | {
@@ -26,4 +27,8 @@ export interface DBVerificationUser {
 export interface VerificationUserCheck {
     verified: DBVerificationUser["verified"];
     banned: DBVerificationUser["banned"];
+}
+
+declare global {
+    var verificationCodeCommandID: string | undefined;
 }

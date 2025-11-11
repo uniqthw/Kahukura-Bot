@@ -1,5 +1,7 @@
+// Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
+
 import { Command } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, Guild, SlashCommandBuilder, Snowflake } from "discord.js";
 import MongoDb from "../../utils/mongo";
 import settings from "../../../settings.json";
 
@@ -19,10 +21,13 @@ export default class CodeCommand implements Command {
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {
         const code = interaction.options.getInteger("code", true);
         const userId = interaction.user.id;
+        const guild = interaction.client.guilds.cache.get(settings.discord.guildID);
+
+        if (!guild) return console.error("Guild not found.");
 
         // Check if the user has a pending verification code
         const verificationUser = await MongoDb.getInstance().getVerificationUser(userId);
-        if (!verificationUser || !verificationUser.verificationData) {
+        if (!verificationUser || !verificationUser.verificationData || !verificationUser.email) {
             return interaction.reply({
                 content: "You do not have a pending verification code.",
                 ephemeral: true
@@ -54,23 +59,41 @@ export default class CodeCommand implements Command {
             verificationData: undefined
         });
 
+        // Remove verification from other users with the same email
+        await this.removeVerificationFromOtherUsers(userId, verificationUser.email, guild);
+
         // Remove the unverified role
-        const guild = interaction.guild;
         if (guild) {
             const member = await guild.members.fetch(userId);
             if (member) {
                 const unverifiedRoleId = settings.discord.rolesID.unverified;
                 const unverifiedRole = guild.roles.cache.get(unverifiedRoleId);
                 if (unverifiedRole && member.roles.cache.has(unverifiedRoleId)) {
-                    await member.roles.remove(unverifiedRole);
+                    await member.roles.remove(unverifiedRole, "User has successfully verified their account with email");
                     console.log(`Removed unverified role from ${member.user.tag} (${member.id})`);
                 }
             }
         }
 
         return interaction.reply({
-            content: "Your account has been successfully verified.",
+            content: "Your account has been successfully verified. Please remember to select your roles in <id:customize>!",
             ephemeral: true
+        });
+    }
+
+    async removeVerificationFromOtherUsers(currentUserId: Snowflake, email: string, guild: Guild) {
+        // Remove verification from any other users with the same email attached
+
+        await MongoDb.getInstance().getManyVerificationUsersByEmail(email, currentUserId).then(async (users) => {
+            for (const user of users) {
+                await MongoDb.getInstance().updateVerificationUserVerificationStatus(user._id, false);
+            
+                try {
+                    await guild?.members.kick(user._id, `User verification revoked due to another user (ID: ${currentUserId}) verifying with the same email.`);
+                } catch(error) {
+                    console.error(`Failed to kick user with ID ${user._id}: `, error);
+                }
+            }
         });
     }
 }

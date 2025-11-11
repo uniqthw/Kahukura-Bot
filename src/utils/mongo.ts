@@ -1,4 +1,4 @@
-// Copyright (C) 2024 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
+// Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
 import { Db, MongoClient } from "mongodb";
 import settings from "../../settings.json";
@@ -69,6 +69,14 @@ export default class MongoDb {
         return user;
     }
 
+    async getManyVerificationUsersByEmail(email: string, currentUserId: string): Promise<DBVerificationUser[]> {
+        const users = await this.db
+            .collection<DBVerificationUser>("verification")
+            .find({ email: email, _id: { $ne: currentUserId } })
+            .toArray();
+        return users;
+    }
+
     async updateVerificationUserBanStatus(
         id: Snowflake,
         banned: DBVerificationUser["banned"]
@@ -78,11 +86,32 @@ export default class MongoDb {
             .updateOne({ _id: id }, { $set: { banned: banned } });
     }
 
+    async updateVerificationUserVerificationStatus(
+        id: Snowflake,
+        verified: DBVerificationUser["verified"]
+    ): Promise<void> {
+        await this.db
+            .collection<DBVerificationUser>("verification")
+            .updateOne({ _id: id }, { $set: { verified: verified } });
+    }
+
     async deleteVerificationUserData(id: Snowflake): Promise<void> {
         await this.db
             .collection<DBVerificationUser>("verification")
             .deleteOne({ _id: id });
     }
+
+    // Verification message cache methods, should only be used for messages sent within the Discord server
+
+    // async cacheVerificationMessage(memberId: Snowflake, messageId: Snowflake): Promise<void> {
+    //     const verificationMessageCache = await this.db
+    //         .collection<DBVerificationUser>("verificationMessageCache")
+    //         .findOne({ _id: memberId });
+        
+    //     if (!verificationMessageCache) return;
+
+    //     insert
+    // }
 
     // Moderation Log Methods
     async insertModLog(entry: ModLogEntry): Promise<void> {
