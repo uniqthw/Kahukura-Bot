@@ -14,21 +14,21 @@ body:
     validations:
       required: true
   - type: textarea
-    id: description
+    id: observed
     attributes:
       label: Observed behaviour
       description: Outline in as much detail as possible the behaviour you have observed in relation to the issue.
     validations:
       required: true
   - type: textarea
-    id: description
+    id: expected
     attributes:
       label: Expected behaviour
       description: Outline in as much detail as possible the behaviour you have expect/what you think should happen instead of the observed problematic behaviour.
     validations:
       required: true
   - type: textarea
-    id: description
+    id: reproduce
     attributes:
       label: Steps to reproduce
       description: Provide the steps to reproduce the issue in as much detail as possible.
@@ -40,7 +40,7 @@ body:
     validations:
       required: true
   - type: textarea
-    id: description
+    id: additional
     attributes:
       label: Additional information
       description: Please please provide any additional information you think may be relevant to this issue, such as error messages, screenshots, log files, etc. Please remember to omit any personal information from this.
