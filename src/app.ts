@@ -109,14 +109,22 @@ class KahukuraApplication {
             }
         });
 
-        // Delete messages sent in the unverified channel that are sent by a user. Interactions such as /verify and /code commands will not be affected.
         this.client.on(Events.MessageCreate, async (message) => {
-            if (message.author.bot || settings.discord.channelsID.unverified != message.channel.id) return;
-            
-            try {
-                await message.delete();
-            } catch (error) {
-                console.error("Failed to delete message in unverified channel: ", error);
+            // Delete messages sent in the unverified channel that are sent by a user. Interactions such as /verify and /code commands will not be affected.
+            if (!message.author.bot && settings.discord.channelsID.unverified == message.channel.id) {
+                try {
+                    await message.delete();
+                } catch (error) {
+                    console.error("Failed to delete message in unverified channel: ", error);
+                }
+
+            // Crosspost messages sent in the socials channel that are sent by a webhook.
+            } else if (message.webhookId && settings.discord.channelsID.socials == message.channel.id) {
+                try {
+                    await message.crosspost();
+                } catch (error) {
+                    console.error("Failed to crosspost message in socials channel: ", error);
+                }
             }
         });
 
