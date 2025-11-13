@@ -1,6 +1,6 @@
 // Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, WebhookClient } from "discord.js";
+import { SlashCommandBuilder, ChatInputCommandInteraction, WebhookClient, PermissionFlagsBits } from "discord.js";
 import { Command } from "../../../@types";
 import settings from "../../../settings.json";
 
@@ -10,6 +10,7 @@ export default class SocialCommand implements Command {
     slashCommand = (new SlashCommandBuilder()
         .setName(this.name)
         .setDescription(this.description)
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageEvents)
         .addStringOption((option) =>
             option
                 .setName("link")
@@ -39,7 +40,7 @@ export default class SocialCommand implements Command {
             });
         } catch (error) {
             console.error("Failed to send social media post to webhook: ", error);
-            
+
             return interaction.reply({
                 ephemeral: true,
                 content: "Failed to send social media post to webhook. Please try again later."
