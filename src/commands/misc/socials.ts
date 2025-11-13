@@ -9,12 +9,12 @@ export default class SocialCommand implements Command {
     slashCommand = (new SlashCommandBuilder()
         .setName(this.name)
         .setDescription(this.description)
-        .addIntegerOption((option) =>
+        .addStringOption((option) =>
             option
                 .setName("link")
                 .setDescription("The link to the social media post (Instagram, Tiktok, etc). This will send the raw link to the webhook and Discord will take care of embedding it.")
                 .setRequired(true)
-        ) as SlashCommandBuilder);
+        ));
 
     /*
         Execute is called when the interaction is used on Discord.
