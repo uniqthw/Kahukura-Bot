@@ -120,7 +120,11 @@ class KahukuraApplication {
 
             // Crosspost messages sent in the socials channel that are sent by a webhook.
             } else if (message.webhookId && settings.discord.channelsID.socials == message.channel.id) {
-                await message.crosspost();
+                try {
+                    await message.crosspost();
+                } catch (error) {
+                    console.error("Failed to crosspost message in socials channel: ", error);
+                }
             }
         });
 
