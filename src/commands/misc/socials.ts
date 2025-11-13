@@ -40,12 +40,15 @@ export default class SocialCommand implements Command {
             });
         } catch (error) {
             console.error("Failed to send social media post to webhook: ", error);
+            webhook.destroy();
 
             return interaction.reply({
                 ephemeral: true,
                 content: "Failed to send social media post to webhook. Please try again later."
             });
         }
+
+        webhook.destroy();
 
         return interaction.reply({
             ephemeral: true,
