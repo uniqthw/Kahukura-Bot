@@ -33,7 +33,7 @@ body:
       label: Steps to reproduce
       description: Provide the steps to reproduce the issue in as much detail as possible.
       placeholder: |
-        Steps to reproduc:
+        Steps to reproduce:
         1. Do thing
         2. Observe behavior
         3. See error logs below
