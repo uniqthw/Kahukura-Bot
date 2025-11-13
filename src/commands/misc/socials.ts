@@ -26,13 +26,25 @@ export default class SocialCommand implements Command {
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {
         const link = interaction.options.getString("link");
 
-        if (!link) return;
+        if (!link) return interaction.reply({
+            ephemeral: true,
+            content: "Please provide a link to the social media post."
+        });
 
         const webhook = new WebhookClient({ url: settings.webhook.socials });
 
-        await webhook.send({
-            content: link
-        });
+        try {
+            await webhook.send({
+                content: link
+            });
+        } catch (error) {
+            console.error("Failed to send social media post to webhook: ", error);
+            
+            return interaction.reply({
+                ephemeral: true,
+                content: "Failed to send social media post to webhook. Please try again later."
+            });
+        }
 
         return interaction.reply({
             ephemeral: true,
