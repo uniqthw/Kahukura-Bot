@@ -2,6 +2,8 @@
 
 import { SlashCommandBuilder, ChatInputCommandInteraction, WebhookClient } from "discord.js";
 import { Command } from "../../../@types";
+import settings from "../../../settings.json";
+import { Command } from "../../../@types";
 
 export default class SocialCommand implements Command {
     name = "socialpost";
