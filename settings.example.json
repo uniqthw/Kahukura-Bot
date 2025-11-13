@@ -6,7 +6,11 @@
             "unverified": "your-server-unverified-roleID"
         },
         "channelsID": {
-            "unverified": "your-server-unverified-channelID"
+            "unverified": "your-server-unverified-channelID",
+            "socials": "your-server-socials-news-channelID"
+        },
+        "webhook": {
+            "socials": "your-server-socials-news-channel-webhook-url"
         }
     },
     "email": {
