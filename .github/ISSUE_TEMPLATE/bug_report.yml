@@ -43,4 +43,4 @@ body:
     id: additional
     attributes:
       label: Additional information
-      description: Please please provide any additional information you think may be relevant to this issue, such as error messages, screenshots, log files, etc. Please remember to omit any personal information from this.
+      description: Please provide any additional information you think may be relevant to this issue, such as error messages, screenshots, log files, etc. Please remember to omit any personal information from this.
