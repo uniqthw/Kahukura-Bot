@@ -57,7 +57,7 @@ export default class DeleteUserDataCommand implements Command {
 
                     if (member && member.kickable) await member.kick("User's data was deleted from the verification database");
                 } catch (error) {
-                    return console.error("An error occurred whilst attempting to kick a user whose data has been deleted:", error);
+                    console.error("An error occurred whilst attempting to kick a user whose data has been deleted:", error);
                 }
 
                 await confirmation.editReply({ content: "Action confirmed. Data has been deleted.", components: []  })
