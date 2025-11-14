@@ -66,7 +66,8 @@ export default class LookupCommand implements Command {
             manualVerificationData: {
                 verified: true,
                 reason: reason,
-                executorId: interaction.user.id
+                executorId: interaction.user.id,
+                executedAt: Date.now()
             }
         });
 
@@ -95,7 +96,7 @@ export default class LookupCommand implements Command {
         await directMessageHandler.deleteOldVerificationMessage(user, interaction.client);
             
         try {
-            const res = await this.sendManualVerificationLog(user, interaction.user, reason);
+            await this.sendManualVerificationLog(user, interaction.user, reason);
         } catch (error) {
             console.error("Failed to send manual verification log:", error);
         }

@@ -26,6 +26,7 @@ export interface DBVerificationUser {
         verified: boolean;
         reason: string;
         executorId: string;
+        executedAt: number;
     }
 }
 
