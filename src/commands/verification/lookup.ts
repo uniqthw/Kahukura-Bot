@@ -63,7 +63,7 @@ export default class LookupCommand implements Command {
         let transporter = createTransport(settings.email);
 
         // Send mail with defined transport object
-        let info = await transporter.sendMail({
+        await transporter.sendMail({
             from: `"UniQ Te Herenga Waka [noreply]" <${settings.email.auth.user}>`,
             to: "itadmin@uniqthw.org.nz",
             subject: `[CONFIDENTIAL] Kahukura user lookup result`,
