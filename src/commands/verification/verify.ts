@@ -30,14 +30,14 @@ export default class VerifyCommand implements Command {
         const email = interaction.options.getString("email", true).toLowerCase();
         const userId = interaction.user.id;
 
-        await directMessageHandler.deleteOldVerificationMessage(interaction.user, interaction.client);
-
         // Check if the email is from @myvuw.ac.nz or @vuw.ac.nz domain
         if (!email.endsWith("@myvuw.ac.nz") && !email.endsWith("@vuw.ac.nz")) {
             return await interaction.editReply({
                 content: "Please use a valid @myvuw.ac.nz or @vuw.ac.nz email address. If you are not a student or staff member at Te Herenga Waka—Victoria University of Wellington, you can request manual verification by contacting us at [discord@uniqthw.org.nz](mailto:discord@uniqthw.org.nz)."
             });
         }
+
+        await directMessageHandler.deleteOldVerificationMessage(interaction.user, interaction.client);
 
         const verificationCodeCommand = await this.getVerifyCodeCommand(interaction.client);
 
