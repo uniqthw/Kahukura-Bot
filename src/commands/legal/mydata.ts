@@ -55,7 +55,7 @@ export default class MyUserDataCommand implements Command {
 
                 return await confirmation.editReply({ content: "Action confirmed. You should have received a copy of your data to the email you used to verify your account.", components: [] });
             } else if (confirmation.customId === "cancel") {
-                return await confirmation.editReply({ content: "Action cancelled.", components: [] });
+                return await confirmation.update({ content: "Action cancelled.", components: [] });
             }
         } catch (error) {
             console.error(error);
@@ -89,12 +89,12 @@ export default class MyUserDataCommand implements Command {
     }
 
     private async generateDataRequestFile(data: DBVerificationUser): Promise<string> {
-        const santitisedData = { ...data };
-        delete santitisedData.verificationData;
-        delete santitisedData.lastDataRequest;
-        delete santitisedData.manualVerificationData;
+        const sanitisedData = { ...data };
+        delete sanitisedData.verificationData;
+        delete sanitisedData.lastDataRequest;
+        delete sanitisedData.manualVerificationData;
 
-        const lookupFileContent = JSON.stringify(santitisedData);
+        const lookupFileContent = JSON.stringify(sanitisedData);
 
         const fileUri = Buffer.from(lookupFileContent.trimStart()).toString("base64");
 

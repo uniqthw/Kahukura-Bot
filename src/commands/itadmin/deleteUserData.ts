@@ -62,7 +62,7 @@ export default class DeleteUserDataCommand implements Command {
 
                 await confirmation.editReply({ content: "Action confirmed. Data has been deleted.", components: []  })
             } else if (confirmation.customId === "cancel") {
-                await confirmation.editReply({ content: "Action cancelled.", components: [] });
+                await confirmation.update({ content: "Action cancelled.", components: [] });
             }
         } catch (error) {
             await interaction.editReply({ content: "Confirmation was not received within 1 minute, cancelling deletion.", components: [] });
