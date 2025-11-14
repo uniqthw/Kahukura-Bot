@@ -7,10 +7,10 @@ import MongoDb from "../utils/mongo";
 export default class DirectMessageHandler {
     async handleMessage(member: GuildMember, message: string | MessageCreateOptions, graceful: boolean, verificationMessage: boolean): Promise<void> {
         try {
-            if (!graceful) return;
-
             await member.send(message);
         } catch (error) {
+            if (!graceful) return;
+
             const unverifiedChannel = await member.guild.channels.fetch(settings.discord.channelsID.unverified);
             
             if (!unverifiedChannel || !unverifiedChannel.isTextBased()) return;
