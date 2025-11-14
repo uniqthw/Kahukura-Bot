@@ -1,14 +1,12 @@
 // Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
 import { Command } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionsBitField, InteractionContextType, User } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionsBitField, InteractionContextType, User, userMention } from "discord.js";
 import MongoDb from "../../utils/mongo";
 import settings from "../../../settings.json";
 import DirectMessageHandler from "../../handlers/directMessageHandler";
-import DynamicCommandHandler from "../../handlers/dynamicCommandHandler";
 import SharedVerificationHandler from "../../handlers/sharedVerificationHandler";
 
-const dynamicCommandHandler = new DynamicCommandHandler();
 const sharedVerificationHandler = new SharedVerificationHandler();
 const directMessageHandler = new  DirectMessageHandler();
 
@@ -101,7 +99,7 @@ export default class LookupCommand implements Command {
             console.error("Failed to send manual verification log:", error);
         }
 
-        return await interaction.editReply({ content: `User <@${user.id}> has been manually verified.` });
+        return await interaction.editReply({ content: `User ${userMention(user.id)} has been manually verified.` });
     }
 
     private async sendManualVerificationLog(verificationUser: User, executor: User, reason: string): Promise<any> {

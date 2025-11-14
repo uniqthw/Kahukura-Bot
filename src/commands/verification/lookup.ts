@@ -54,7 +54,7 @@ export default class LookupCommand implements Command {
         }
 
         return await interaction.editReply({
-            content: `User lookup report successfully requested against <@${user.id}>.`
+            content: `User lookup report successfully requested against ${userMention(user.id)}.`
         });
     }
 

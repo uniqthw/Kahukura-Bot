@@ -22,10 +22,10 @@ export default class MyUserDataCommand implements Command {
         });
 
         if (!verificationUser.email && verificationUser.oldEmail) return await interaction.editReply({
-            content: "Unfortunately, you need to contact us at (itadmin@uniqthw.org.nz)[mailto:itadmin@uniqthw.org.nz] to manually process your request."
+            content: "Unfortunately, you need to contact us at [itadmin@uniqthw.org.nz](mailto:itadmin@uniqthw.org.nz) to manually process your request."
         });
 
-        if (verificationUser.lastDataRequest && Date.now () < verificationUser.lastDataRequest * 7 * 24 * 60 * 60 * 1000) return await interaction.editReply({
+        if (verificationUser.lastDataRequest && Date.now () < (verificationUser.lastDataRequest + 7 * 24 * 60 * 60 * 1000)) return await interaction.editReply({
             content: `You have previously requested a copy of your data <t:${verificationUser.lastDataRequest.toString().slice(0, 10)}:R>, you can only do this once every 7 days.`
         });
 
@@ -44,18 +44,21 @@ export default class MyUserDataCommand implements Command {
             const confirmation = await verifyDeletionRequestResponse.awaitMessageComponent({ filter: collectionFilter, time: 60_000 })
 
             if (confirmation.customId === "confirm") {
+                await confirmation.deferUpdate();
+
                 try {
                     await this.processDataRequest(verificationUser);
                 } catch (error) {
-                    await confirmation.update({ content: "An error occurred whilst completing your data request. Please contact us at (itadmin@uniqthw.org.nz)[mailto:itadmin@uniqthw.org.nz] to manually process your request.", components: []  });
+                    await confirmation.editReply({ content: "An error occurred whilst completing your data request. Please contact us at [itadmin@uniqthw.org.nz](mailto:itadmin@uniqthw.org.nz) to manually process your request.", components: []  });
                     return console.error("An error occurred whilst processing a user's data request:", error);
                 }
 
-                return await confirmation.update({ content: "Action confirmed. You should have received a copy of your data to the email you used to verify your account.", components: [] });
+                return await confirmation.editReply({ content: "Action confirmed. You should have received a copy of your data to the email you used to verify your account.", components: [] });
             } else if (confirmation.customId === "cancel") {
-                return await confirmation.update({ content: "Action cancelled.", components: [] });
+                return await confirmation.editReply({ content: "Action cancelled.", components: [] });
             }
         } catch (error) {
+            console.error(error);
             return await interaction.editReply({ content: "Confirmation was not received within 1 minute, cancelling request.", components: [] });
         }
     }

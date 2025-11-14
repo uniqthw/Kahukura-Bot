@@ -1,6 +1,6 @@
 // Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
-import { GuildMember, Snowflake } from "discord.js";
+import { GuildMember, Snowflake, userMention } from "discord.js";
 import settings from "../../settings.json";
 import MongoDb from "../utils/mongo";
 import { VerificationUserCheck } from "../../@types";
@@ -68,7 +68,7 @@ export default class VerificationJoinHandler {
         }
 
         await this.directMessageHandler.handleMessage(member, {
-            content: `Kia ora <@${member.user.id}>, before you can interact within UniQ Te Herenga Waka, such as sending messages, you need to verify your account first.\n\nTo get verified e hoa, please run the ${verifyCommand} command!\n\nIf you are not a student or staff member at Te Herenga Waka—Victoria University of Wellington, you will need to request manual verification by emailing us at [discord@uniqthw.org.nz](mailto:discord@uniqthw.org.nz).`,
+            content: `Kia ora ${userMention(member.user.id)}, before you can interact within UniQ Te Herenga Waka, such as sending messages, you need to verify your account first.\n\nTo get verified e hoa, please run the ${verifyCommand} command!\n\nIf you are not a student or staff member at Te Herenga Waka—Victoria University of Wellington, you will need to request manual verification by emailing us at [discord@uniqthw.org.nz](mailto:discord@uniqthw.org.nz).`,
             allowedMentions: { users: [member.id] }
         }, true, true);
     }

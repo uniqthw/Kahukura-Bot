@@ -80,8 +80,6 @@ export default class InteractionHandler {
         /* 
             Handles any interactions sent from Discord API by seeing if the interaction executed is in the list of 
             commands defined by this.commands().
-
-            If it is not, it returns a promise rejection. Otherwise, it executes the command and logs on success or error.
         */
 
         const command = this.commands.find(

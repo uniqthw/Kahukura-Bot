@@ -33,7 +33,7 @@ export default class DeleteUserDataCommand implements Command {
         const componentsRow = new ActionRowBuilder<ButtonBuilder>().addComponents(cancelButton, confirmButton);
 
         const verifyDeletionRequestResponse = await interaction.editReply({
-            content: `Are you sure you want to delete <@${user.id}>'s data from the verification database? This decision is irreversible, and if they are currently within the server they will be kicked.`,
+            content: `Are you sure you want to delete ${userMention(user.id)}'s data from the verification database? This decision is irreversible, and if they are currently within the server they will be kicked.`,
             components: [ componentsRow ]
         });
 
@@ -43,11 +43,13 @@ export default class DeleteUserDataCommand implements Command {
             const confirmation = await verifyDeletionRequestResponse.awaitMessageComponent({ filter: collectionFilter, time: 60_000 })
 
             if (confirmation.customId === "confirm") {
+                await confirmation.deferUpdate();
+
                 try {
                     await MongoDb.getInstance().deleteVerificationUserData(user.id);
                 } catch (error) {
-                    await confirmation.update({ content: "An error occurred whilst deleting the user's data.", components: []  })
-                    console.error("An error occurred whilst deleting a user's data:", error);
+                    await confirmation.editReply({ content: "An error occurred whilst deleting the user's data.", components: []  })
+                    return console.error("An error occurred whilst deleting a user's data:", error);
                 }
 
                 try {
@@ -55,12 +57,12 @@ export default class DeleteUserDataCommand implements Command {
 
                     if (member && member.kickable) member.kick("User's data was deleted from the verification database");
                 } catch (error) {
-                    console.error("An error occurred whilst attempting to kick a user whose data has been deleted:", error);
+                    return console.error("An error occurred whilst attempting to kick a user whose data has been deleted:", error);
                 }
 
-                await confirmation.update({ content: "Action confirmed. Data has has been deleted.", components: []  })
+                await confirmation.editReply({ content: "Action confirmed. Data has been deleted.", components: []  })
             } else if (confirmation.customId === "cancel") {
-                await confirmation.update({ content: "Action cancelled.", components: [] });
+                await confirmation.editReply({ content: "Action cancelled.", components: [] });
             }
         } catch (error) {
             await interaction.editReply({ content: "Confirmation was not received within 1 minute, cancelling deletion.", components: [] });
