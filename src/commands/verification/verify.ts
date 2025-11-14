@@ -105,8 +105,6 @@ export default class VerifyCommand implements Command {
             text: `Your Discord verification code is: ${verificationCode}`, // Plain text body
             html: `<b>Your Discord verification code is: ${verificationCode}</b>` // HTML body
         });
-
-        console.log(`Message sent: ${info.messageId}`);
     }
 
     private generateVerificationCode(): number {

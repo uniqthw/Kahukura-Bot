@@ -75,7 +75,6 @@ export default class CodeCommand implements Command {
                     const unverifiedRole = guild.roles.cache.get(unverifiedRoleId);
                     if (unverifiedRole && member.roles.cache.has(unverifiedRoleId)) {
                         await member.roles.remove(unverifiedRole, "User has successfully verified their account with email");
-                        console.log(`Removed unverified role from ${member.user.tag} (${member.id})`);
                     }
                 }
             } catch (error) {

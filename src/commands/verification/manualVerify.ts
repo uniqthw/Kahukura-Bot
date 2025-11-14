@@ -86,7 +86,6 @@ export default class LookupCommand implements Command {
                 const unverifiedRole = guild.roles.cache.get(unverifiedRoleId);
                 if (unverifiedRole && member.roles.cache.has(unverifiedRoleId)) {
                     await member.roles.remove(unverifiedRole, "Manually verified by admin command");
-                    console.log(`Manually verified by admin command, removing unverified role from ${member.user.tag} (${member.id})`);
                 }
             }
         } catch (error) {
@@ -97,7 +96,6 @@ export default class LookupCommand implements Command {
             
         try {
             const res = await this.sendManualVerificationLog(user, interaction.user, reason);
-            console.log("Google Chat message sent successfully:", res);
         } catch (error) {
             console.error("Failed to send manual verification log:", error);
         }

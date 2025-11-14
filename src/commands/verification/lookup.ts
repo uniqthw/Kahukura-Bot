@@ -77,8 +77,6 @@ export default class LookupCommand implements Command {
                 }
             ]
         });
-
-        console.log(`Message sent: ${info.messageId}`);
     }
 
     private async generateUserLookupFile(verificationUser: DBVerificationUser, checkuser: User): Promise<string> {
