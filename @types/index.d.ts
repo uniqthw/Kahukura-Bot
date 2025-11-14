@@ -22,13 +22,21 @@ export interface DBVerificationUser {
         expiresAt: number; // Unix timestamp in milliseconds
         lastAttemptAt: number; // Unix timestamp in milliseconds
     }
+    manualVerificationData?: {
+        verified: boolean;
+        reason: string;
+        executorId: string;
+    }
+}
+
+// Defined an interface for the verification cache message
+export interface VerificationMessageCache {
+    // Use Discord Snowflake string IDs for _id instead of MongoDb ObjectId.
+    _id: string;
+    messageId: string;
 }
 
 export interface VerificationUserCheck {
     verified: DBVerificationUser["verified"];
     banned: DBVerificationUser["banned"];
-}
-
-declare global {
-    var verificationCodeCommandID: string | undefined;
 }

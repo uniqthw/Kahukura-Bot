@@ -1,6 +1,6 @@
 import { Command } from "../../../@types";
 import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, TextChannel, PermissionFlagsBits } from "discord.js";
-import { hasModeratorRole } from "../../utils/modRoleCheck";
+import { hasModeratorRole } from "../../utils/roleCheck";
 import { logModAction } from "../../utils/modlog";
 import settings from "../../../settings.json";
 
@@ -28,7 +28,7 @@ export default class PurgeCommand implements Command {
         
         // Permission check: must have moderator role
         if (!hasModeratorRole(member)) {
-            return interaction.editReply({ content: "You do not have permission to use this command." });
+            return await interaction.editReply({ content: "You do not have permission to use this command." });
         }
         
         // Get command options
@@ -39,7 +39,7 @@ export default class PurgeCommand implements Command {
         
         // Validate amount
         if (amount < 1 || amount > 100) {
-            return interaction.editReply({ content: "Amount must be between 1 and 100." });
+            return await interaction.editReply({ content: "Amount must be between 1 and 100." });
         }
         
         try {
@@ -72,12 +72,12 @@ export default class PurgeCommand implements Command {
                 guildId: interaction.guild?.id || ""
             });
             
-            return interaction.editReply({ 
+            return await interaction.editReply({ 
                 content: `Deleted ${deletedCount} messages${targetUser ? ` from <@${targetUser.id}>` : ''}. Reason: ${reason}` 
             });
         } catch (err) {
             // Error handling
-            return interaction.editReply({ content: `Failed to purge messages: ${err}` });
+            return await interaction.editReply({ content: `Failed to purge messages: ${err}` });
         }
     }
 }

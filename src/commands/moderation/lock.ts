@@ -1,6 +1,6 @@
 import { Command } from "../../../@types";
 import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, TextChannel, PermissionFlagsBits } from "discord.js";
-import { hasModeratorRole } from "../../utils/modRoleCheck";
+import { hasModeratorRole } from "../../utils/roleCheck";
 import { logModAction } from "../../utils/modlog";
 import settings from "../../../settings.json";
 
@@ -22,7 +22,7 @@ export default class LockCommand implements Command {
         
         // Permission check: must have moderator role
         if (!hasModeratorRole(member)) {
-            return interaction.editReply({ content: "You do not have permission to use this command." });
+            return await interaction.editReply({ content: "You do not have permission to use this command." });
         }
         
         // Get command options
@@ -54,12 +54,12 @@ export default class LockCommand implements Command {
             // Send public message about lock
             await channel.send(`🔒 This channel has been locked by <@${member.user.id}>. Reason: ${reason}`);
             
-            return interaction.editReply({ 
+            return await interaction.editReply({ 
                 content: `Channel <#${channel.id}> has been locked. Reason: ${reason}` 
             });
         } catch (err) {
             // Error handling
-            return interaction.editReply({ content: `Failed to lock channel: ${err}` });
+            return await interaction.editReply({ content: `Failed to lock channel: ${err}` });
         }
     }
 }

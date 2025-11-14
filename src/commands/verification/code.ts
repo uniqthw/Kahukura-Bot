@@ -1,7 +1,7 @@
 // Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
 import { Command } from "../../../@types";
-import { ChatInputCommandInteraction, Guild, SlashCommandBuilder, Snowflake } from "discord.js";
+import { ChatInputCommandInteraction, Client, Guild, SlashCommandBuilder, Snowflake } from "discord.js";
 import MongoDb from "../../utils/mongo";
 import settings from "../../../settings.json";
 
@@ -19,34 +19,37 @@ export default class CodeCommand implements Command {
         ) as SlashCommandBuilder);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {
+        await interaction.deferReply({ ephemeral: true });
+
         const code = interaction.options.getInteger("code", true);
         const userId = interaction.user.id;
-        const guild = interaction.client.guilds.cache.get(settings.discord.guildID);
+        const guild = await interaction.client.guilds.fetch(settings.discord.guildID);
 
         if (!guild) return console.error("Guild not found.");
 
         // Check if the user has a pending verification code
         const verificationUser = await MongoDb.getInstance().getVerificationUser(userId);
         if (!verificationUser || !verificationUser.verificationData || !verificationUser.email) {
-            return interaction.reply({
-                content: "You do not have a pending verification code.",
-                ephemeral: true
+            return await interaction.editReply({
+                content: "You do not have a pending verification code."
             });
         }
 
         const { verificationData } = verificationUser;
 
         if (verificationData.code !== code) {
-            return interaction.reply({
-                content: "The verification code you entered is incorrect.",
-                ephemeral: true
+            const verificationCommand = await this.getVerifyCommand(interaction.client);
+
+            return await interaction.editReply({
+                content: `The verification code you entered is incorrect. If required, please request a new one by re-running the ${verificationCommand} command.`
             });
         }
 
         if (Date.now() > verificationData.expiresAt) {
-            return interaction.reply({
-                content: "The verification code has expired. Please request a new one.",
-                ephemeral: true
+            const verificationCommand = await this.getVerifyCommand(interaction.client);
+
+            return await interaction.editReply({
+                content: `The verification code has expired. Please request a new one by re-running the ${verificationCommand} command.`
             });
         }
 
@@ -64,20 +67,24 @@ export default class CodeCommand implements Command {
 
         // Remove the unverified role
         if (guild) {
-            const member = await guild.members.fetch(userId);
-            if (member) {
-                const unverifiedRoleId = settings.discord.rolesID.unverified;
-                const unverifiedRole = guild.roles.cache.get(unverifiedRoleId);
-                if (unverifiedRole && member.roles.cache.has(unverifiedRoleId)) {
-                    await member.roles.remove(unverifiedRole, "User has successfully verified their account with email");
-                    console.log(`Removed unverified role from ${member.user.tag} (${member.id})`);
+            try {
+                const member = await guild.members.fetch(userId);
+
+                if (member) {
+                    const unverifiedRoleId = settings.discord.rolesID.unverified;
+                    const unverifiedRole = guild.roles.cache.get(unverifiedRoleId);
+                    if (unverifiedRole && member.roles.cache.has(unverifiedRoleId)) {
+                        await member.roles.remove(unverifiedRole, "User has successfully verified their account with email");
+                        console.log(`Removed unverified role from ${member.user.tag} (${member.id})`);
+                    }
                 }
+            } catch (error) {
+                console.error(`Failed to fetch member or remove unverified role for user ID ${interaction.id}:`, error);
             }
         }
 
-        return interaction.reply({
-            content: "Your account has been successfully verified. Please remember to select your roles in <id:customize>!",
-            ephemeral: true
+        return await interaction.editReply({
+            content: "Your account has been successfully verified. Please remember to select your roles in <id:customize>!"
         });
     }
 
@@ -95,5 +102,17 @@ export default class CodeCommand implements Command {
                 }
             }
         });
+    }
+
+    private async getVerifyCommand(client: Client) {
+        const commands = await client.application?.commands.fetch();
+        const verifyCodeCommandID = commands?.find(
+            (command) => command.name === "verify"
+        )?.id;
+        
+        
+        return verifyCodeCommandID
+            ? `</verify:${verifyCodeCommandID}>`
+            : "/verify";
     }
 }

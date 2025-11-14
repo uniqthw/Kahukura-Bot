@@ -65,18 +65,6 @@ class KahukuraApplication {
             console.log(
                 `Connected to the Discord client as ${bot.user.username}#${bot.user.discriminator} (${bot.user.id}).`
             );
-
-            global.verificationCodeCommandID;
-
-            this.client.application?.commands
-                .fetch()
-                .then(
-                    (commands) =>
-                        (global.verificationCodeCommandID = commands.find(
-                            (command) => command.name === "verify"
-                        )?.id)
-                )
-                .catch(console.error);
         });
 
         // Error event handler, logs to console on error

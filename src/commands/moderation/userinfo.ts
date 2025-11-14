@@ -1,6 +1,6 @@
 import { Command } from "../../../@types";
 import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, EmbedBuilder, PermissionFlagsBits } from "discord.js";
-import { hasModeratorRole } from "../../utils/modRoleCheck";
+import { hasModeratorRole } from "../../utils/roleCheck";
 import { getModLogs } from "../../utils/modlog";
 import MongoDb from "../../utils/mongo";
 import settings from "../../../settings.json";
@@ -23,7 +23,7 @@ export default class UserinfoCommand implements Command {
         
         // Permission check: must have moderator role
         if (!hasModeratorRole(member)) {
-            return interaction.editReply({ content: "You do not have permission to use this command." });
+            return await interaction.editReply({ content: "You do not have permission to use this command." });
         }
         
         // Get command options
@@ -122,10 +122,10 @@ export default class UserinfoCommand implements Command {
                 });
             }
             
-            return interaction.editReply({ embeds: [embed] });
+            return await interaction.editReply({ embeds: [embed] });
         } catch (err) {
             // Error handling
-            return interaction.editReply({ content: `Failed to retrieve user information: ${err}` });
+            return await interaction.editReply({ content: `Failed to retrieve user information: ${err}` });
         }
     }
 }
