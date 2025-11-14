@@ -88,8 +88,8 @@ export default class LookupCommand implements Command {
         
         --- RESULTS ---
         Discord ID: ${verificationUser._id}
-        Email address: ${verificationUser.email}
-        Old email address(es): ${verificationUser.oldEmail}
+        Email address: ${verificationUser.email ?? "N/A"}
+        Old email address(es): ${verificationUser.oldEmail ?? "N/A"}
         Verified user: ${verificationUser.verified}
         Banned user: ${verificationUser.banned}
 
@@ -97,7 +97,7 @@ export default class LookupCommand implements Command {
         Discord ID: ${checkuser.id}
         Discord Username: @${checkuser.username}`
 
-        const fileUri = Buffer.from(lookupFileContent).toString("base64");
+        const fileUri = Buffer.from(lookupFileContent.trimStart()).toString("base64");
 
         return fileUri;
     }

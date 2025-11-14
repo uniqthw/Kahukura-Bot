@@ -69,20 +69,18 @@ export default class CodeCommand implements Command {
         await this.removeVerificationFromOtherUsers(userId, verificationUser.email, guild);
 
         // Remove the unverified role
-        if (guild) {
-            try {
-                const member = await guild.members.fetch(userId);
+        try {
+            const member = await guild.members.fetch(userId);
 
-                if (member) {
-                    const unverifiedRoleId = settings.discord.rolesID.unverified;
-                    const unverifiedRole = guild.roles.cache.get(unverifiedRoleId);
-                    if (unverifiedRole && member.roles.cache.has(unverifiedRoleId)) {
-                        await member.roles.remove(unverifiedRole, "User has successfully verified their account with email");
-                    }
+            if (member) {
+                const unverifiedRoleId = settings.discord.rolesID.unverified;
+                const unverifiedRole = guild.roles.cache.get(unverifiedRoleId);
+                if (unverifiedRole && member.roles.cache.has(unverifiedRoleId)) {
+                    await member.roles.remove(unverifiedRole, "User has successfully verified their account with email");
                 }
-            } catch (error) {
-                console.error(`Failed to fetch member or remove unverified role for user ID ${userId}:`, error);
             }
+        } catch (error) {
+            console.error(`Failed to fetch member or remove unverified role for user ID ${userId}:`, error);
         }
 
         return await interaction.editReply({
@@ -93,16 +91,16 @@ export default class CodeCommand implements Command {
     async removeVerificationFromOtherUsers(currentUserId: Snowflake, email: string, guild: Guild) {
         // Remove verification from any other users with the same email attached
 
-        await MongoDb.getInstance().getManyVerificationUsersByEmail(email, currentUserId).then(async (users) => {
-            for (const user of users) {
-                await MongoDb.getInstance().updateVerificationUserVerificationStatus(user._id, false);
-            
-                try {
-                    await guild?.members.kick(user._id, `User verification revoked due to another user (ID: ${currentUserId}) verifying with the same email.`);
-                } catch(error) {
-                    console.error(`Failed to kick user with ID ${user._id}: `, error);
-                }
+        const users = await MongoDb.getInstance().getManyVerificationUsersByEmail(email, currentUserId);
+
+        for (const user of users) {
+            await MongoDb.getInstance().updateVerificationUserVerificationStatus(user._id, false);
+        
+            try {
+                await guild?.members.kick(user._id, `User verification revoked due to another user (ID: ${currentUserId}) verifying with the same email.`);
+            } catch(error) {
+                console.error(`Failed to kick user with ID ${user._id}: `, error);
             }
-        });
+        }
     }
 }
