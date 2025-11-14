@@ -13,11 +13,11 @@ export interface Command {
 export interface DBVerificationUser {
     // Use Discord Snowflake string IDs for _id instead of MongoDB ObjectId.
     _id: string;
-    email: string | undefined;
-    oldEmail?: string | undefined;
+    email?: string;
+    oldEmail?: string;
     verified: boolean;
     banned: boolean;
-    verificationData: undefined | {
+    verificationData?: {
         code: number;
         expiresAt: number; // Unix timestamp in milliseconds
         lastAttemptAt: number; // Unix timestamp in milliseconds
@@ -28,6 +28,7 @@ export interface DBVerificationUser {
         executorId: string;
         executedAt: number;
     }
+    lastDataRequest?: number;
 }
 
 // Defined an interface for the verification cache message

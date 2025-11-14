@@ -1,12 +1,16 @@
 // Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
 import { Command } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionsBitField, Guild, Snowflake, InteractionContextType, User } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionsBitField, InteractionContextType, User } from "discord.js";
 import MongoDb from "../../utils/mongo";
 import settings from "../../../settings.json";
 import DirectMessageHandler from "../../handlers/directMessageHandler";
+import DynamicCommandHandler from "../../handlers/dynamicCommandHandler";
+import SharedVerificationHandler from "../../handlers/sharedVerificationHandler";
 
-const directMessageHandler = new DirectMessageHandler();
+const dynamicCommandHandler = new DynamicCommandHandler();
+const sharedVerificationHandler = new SharedVerificationHandler();
+const directMessageHandler = new  DirectMessageHandler();
 
 export default class LookupCommand implements Command {
     name = "manualverify";
@@ -72,7 +76,7 @@ export default class LookupCommand implements Command {
         });
 
         // Remove verification from other users with the same email
-        await this.removeVerificationFromOtherUsers(user.id, email, interaction.guild);
+        await sharedVerificationHandler.removeVerificationFromOtherUsers(user.id, email, interaction.guild);
 
         // Try to fetch guild member and remove unverified role
         try {
@@ -98,22 +102,6 @@ export default class LookupCommand implements Command {
         }
 
         return await interaction.editReply({ content: `User <@${user.id}> has been manually verified.` });
-    }
-
-    async removeVerificationFromOtherUsers(currentUserId: Snowflake, email: string, guild: Guild) {
-        // Remove verification from any other users with the same email attached
-
-        await MongoDb.getInstance().getManyVerificationUsersByEmail(email, currentUserId).then(async (users) => {
-            for (const user of users) {
-                await MongoDb.getInstance().updateVerificationUserVerificationStatus(user._id, false);
-            
-                try {
-                    await guild?.members.kick(user._id, `User verification revoked due to another user (ID: ${currentUserId}) verifying with the same email.`);
-                } catch(error) {
-                    console.error(`Failed to kick user with ID ${user._id}: `, error);
-                }
-            }
-        });
     }
 
     private async sendManualVerificationLog(verificationUser: User, executor: User, reason: string): Promise<any> {

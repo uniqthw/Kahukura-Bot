@@ -5,8 +5,10 @@ import { ChatInputCommandInteraction, Guild, SlashCommandBuilder, Snowflake } fr
 import MongoDb from "../../utils/mongo";
 import settings from "../../../settings.json";
 import DynamicCommandHandler from "../../handlers/dynamicCommandHandler";
+import SharedVerificationHandler from "../../handlers/sharedVerificationHandler";
 
 const dynamicCommandHandler = new DynamicCommandHandler();
+const sharedVerificationHandler = new SharedVerificationHandler();
 
 export default class CodeCommand implements Command {
     name = "code";
@@ -66,7 +68,7 @@ export default class CodeCommand implements Command {
         });
 
         // Remove verification from other users with the same email
-        await this.removeVerificationFromOtherUsers(userId, verificationUser.email, guild);
+        await sharedVerificationHandler.removeVerificationFromOtherUsers(userId, verificationUser.email, guild);
 
         // Remove the unverified role
         try {
@@ -86,21 +88,5 @@ export default class CodeCommand implements Command {
         return await interaction.editReply({
             content: "Your account has been successfully verified. Please remember to select your roles in <id:customize>!"
         });
-    }
-
-    async removeVerificationFromOtherUsers(currentUserId: Snowflake, email: string, guild: Guild) {
-        // Remove verification from any other users with the same email attached
-
-        const users = await MongoDb.getInstance().getManyVerificationUsersByEmail(email, currentUserId);
-
-        for (const user of users) {
-            await MongoDb.getInstance().updateVerificationUserVerificationStatus(user._id, false);
-        
-            try {
-                await guild?.members.kick(user._id, `User verification revoked due to another user (ID: ${currentUserId}) verifying with the same email.`);
-            } catch(error) {
-                console.error(`Failed to kick user with ID ${user._id}: `, error);
-            }
-        }
     }
 }

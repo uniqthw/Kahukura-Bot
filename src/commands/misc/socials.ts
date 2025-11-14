@@ -15,7 +15,7 @@ export default class SocialCommand implements Command {
             option
                 .setName("link")
                 .setDescription(
-                    "The link to the social media post (Instagram, Tiktok, etc). This will send the raw link to the webhook and Discord will take care of embedding it."
+                    "The link to the social media post, this will send the raw link to the webhook."
                 )
                 .setRequired(true)
         ) as SlashCommandBuilder);
@@ -32,7 +32,7 @@ export default class SocialCommand implements Command {
             content: "Please provide a link to the social media post."
         });
 
-        const webhook = new WebhookClient({ url: settings.webhook.socials });
+        const webhook = new WebhookClient({ url: settings.discord.webhook.socials });
 
         try {
             await webhook.send({

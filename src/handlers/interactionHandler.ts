@@ -6,6 +6,9 @@ import { Command } from "../../@types";
 // Legal commands
 import TermsCommand from "../commands/legal/terms";
 import PrivacyCommand from "../commands/legal/privacy";
+import MyUserDataCommand from "../commands/legal/mydata";
+
+// IT admin commands
 import DeleteUserData from "../commands/itadmin/deleteUserData";
 
 // Verification commands
@@ -43,7 +46,8 @@ export default class InteractionHandler {
             new LookupCommand(),
             new ManualVerifyCommand(),
             new SocialCommand(),
-            // new DeleteUserData(),
+            new DeleteUserData(),
+            new MyUserDataCommand()
             // Moderation Commands
             // new BanCommand(),
             // new UnbanCommand(),
@@ -84,7 +88,10 @@ export default class InteractionHandler {
             (command) => command.name === interaction.commandName
         );
 
-        if (!command) return Promise.reject("Command not found.");
+        if (!command) {
+            console.error(`Command not found: ${interaction.commandName}`);
+            return; // Return early instead of rejecting
+        }
 
         command
             .execute(interaction)
