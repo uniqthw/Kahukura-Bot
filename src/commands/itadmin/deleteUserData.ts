@@ -55,7 +55,7 @@ export default class DeleteUserDataCommand implements Command {
                 try {
                     const member = await interaction.guild?.members.fetch(user);
 
-                    if (member && member.kickable) member.kick("User's data was deleted from the verification database");
+                    if (member && member.kickable) await member.kick("User's data was deleted from the verification database");
                 } catch (error) {
                     return console.error("An error occurred whilst attempting to kick a user whose data has been deleted:", error);
                 }
