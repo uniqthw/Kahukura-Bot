@@ -17,7 +17,7 @@ export default class DirectMessageHandler {
 
             try {
                 const sentMessage = await unverifiedChannel.send(message);
-                if (verificationMessage) this.handleVerificationMessage(member, sentMessage);
+                if (verificationMessage) await this.handleVerificationMessage(member, sentMessage);
             } catch (error) {
                 console.error("Failed to send DM and fallback message for graceful message: ", error);
             }
