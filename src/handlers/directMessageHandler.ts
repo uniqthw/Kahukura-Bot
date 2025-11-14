@@ -40,7 +40,8 @@ export default class DirectMessageHandler {
                     await MongoDb.getInstance().deleteCacheVerificationMessage(user.id);
                 }
             } catch (error) {
-                console.error("Failed to delete cached verification message: ", error)
+                await MongoDb.getInstance().deleteCacheVerificationMessage(user.id);
+                console.error(`Failed to delete cached verification message (user ID ${user.id}): `, error)
             }
         }
 
