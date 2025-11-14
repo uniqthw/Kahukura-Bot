@@ -26,7 +26,7 @@ export default class MyUserDataCommand implements Command {
         });
 
         if (verificationUser.lastDataRequest && Date.now () < (verificationUser.lastDataRequest + 7 * 24 * 60 * 60 * 1000)) return await interaction.editReply({
-            content: `You have previously requested a copy of your data <t:${verificationUser.lastDataRequest.toString().slice(0, 10)}:R>, you can only do this once every 7 days.`
+            content: `You have previously requested a copy of your data <t:${Math.floor(verificationUser.lastDataRequest / 1000)}:R>, you can only do this once every 7 days.`
         });
 
         const confirmButton = new ButtonBuilder().setCustomId("confirm").setLabel("Confirm Request").setStyle(ButtonStyle.Success);
@@ -89,11 +89,12 @@ export default class MyUserDataCommand implements Command {
     }
 
     private async generateDataRequestFile(data: DBVerificationUser): Promise<string> {
-        delete data.verificationData;
-        delete data.lastDataRequest;
-        delete data.manualVerificationData;
+        const santitisedData = { ...data };
+        delete santitisedData.verificationData;
+        delete santitisedData.lastDataRequest;
+        delete santitisedData.manualVerificationData;
 
-        const lookupFileContent = JSON.stringify(data);
+        const lookupFileContent = JSON.stringify(santitisedData);
 
         const fileUri = Buffer.from(lookupFileContent.trimStart()).toString("base64");
 
