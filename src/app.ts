@@ -87,8 +87,8 @@ class KahukuraApplication {
             if (member.guild.id !== settings.discord.guildID) return;
 
             try {
-                const verifyCommandID = await this.dynamicCommandHandler.getVerifyCommand(this.client);
-                this.verificationJoinHandler.handleJoin(member, verifyCommandID);
+                const verifyCommand = await this.dynamicCommandHandler.getVerifyCommand(this.client);
+                this.verificationJoinHandler.handleJoin(member, verifyCommand);
             } catch (error) {
                 console.error("Error fetching commands for GuildMemberAdd:", error);
                 // Still call handleJoin but with undefined verifyCommandID
