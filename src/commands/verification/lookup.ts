@@ -97,8 +97,8 @@ export default class LookupCommand implements Command {
         Discord ID: ${checkuser.id}
         Discord Username: @${checkuser.username}`
 
-        const fileUri = Buffer.from(lookupFileContent.trimStart()).toString("base64");
-
-        return fileUri;
+        
+        // Returns JSON in base64 string
+        return Buffer.from(lookupFileContent.trimStart()).toString("base64");
     }
 }

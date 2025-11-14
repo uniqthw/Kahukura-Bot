@@ -28,6 +28,7 @@ export default class DeleteUserDataCommand implements Command {
             content: "This user is not in the database."
         });
 
+        // Builds the button components for the confirmation message
         const confirmButton = new ButtonBuilder().setCustomId("confirm").setLabel("Confirm Deletion").setStyle(ButtonStyle.Danger);
         const cancelButton = new ButtonBuilder().setCustomId("cancel").setLabel("Cancel").setStyle(ButtonStyle.Secondary);
         const componentsRow = new ActionRowBuilder<ButtonBuilder>().addComponents(cancelButton, confirmButton);

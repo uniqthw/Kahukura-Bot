@@ -29,6 +29,7 @@ export default class MyUserDataCommand implements Command {
             content: `You have previously requested a copy of your data <t:${Math.floor(verificationUser.lastDataRequest / 1000)}:R>, you can only do this once every 7 days.`
         });
 
+        // Builds the button components for the confirmation message
         const confirmButton = new ButtonBuilder().setCustomId("confirm").setLabel("Confirm Request").setStyle(ButtonStyle.Success);
         const cancelButton = new ButtonBuilder().setCustomId("cancel").setLabel("Cancel").setStyle(ButtonStyle.Secondary);
         const componentsRow = new ActionRowBuilder<ButtonBuilder>().addComponents(confirmButton, cancelButton);
@@ -89,15 +90,16 @@ export default class MyUserDataCommand implements Command {
     }
 
     private async generateDataRequestFile(data: DBVerificationUser): Promise<string> {
+        // Sanitises DBVerificationUser object to remove certain properties that are not personal information and important not to include
         const sanitisedData = { ...data };
         delete sanitisedData.verificationData;
         delete sanitisedData.lastDataRequest;
         delete sanitisedData.manualVerificationData;
 
+        // Converts DBVerificationUser object into JSON
         const lookupFileContent = JSON.stringify(sanitisedData);
 
-        const fileUri = Buffer.from(lookupFileContent).toString("base64");
-
-        return fileUri;
+        // Returns JSON in base64 string
+        return Buffer.from(lookupFileContent).toString("base64");
     }
 } 
