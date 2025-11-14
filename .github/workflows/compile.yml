@@ -32,5 +32,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Copy example settings
+        run: cp settings.example.json settings.json
+
       - name: Compile TypeScript
         run: pnpm run build
