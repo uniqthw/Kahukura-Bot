@@ -34,7 +34,7 @@ export default class VerificationJoinHandler {
     */
     async handleJoin(
         member: GuildMember,
-        verifyCommand: Snowflake | undefined
+        verifyCommand: string | undefined
     ): Promise<void> {
         // Automatically quarantines all users who join until all checks complete
         await member.roles.add(
