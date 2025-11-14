@@ -14,12 +14,14 @@ import settings from "../settings.json";
 import InteractionHandler from "./handlers/interactionHandler";
 import VerificationJoinHandler from "./handlers/verificationJoinHandler";
 import VerificationBanHandler from "./handlers/verificationBanHandler";
+import DynamicCommandHandler from "./handlers/dynamicCommandHandler";
 
 class KahukuraApplication {
     private client: Client;
     private interactionHandler: InteractionHandler;
     private verificationJoinHandler: VerificationJoinHandler;
     private verificationBanHandler: VerificationBanHandler;
+    private dynamicCommandHandler: DynamicCommandHandler;
     private discordRestClient: REST;
 
     constructor() {
@@ -35,6 +37,7 @@ class KahukuraApplication {
         this.interactionHandler = new InteractionHandler();
         this.verificationJoinHandler = new VerificationJoinHandler();
         this.verificationBanHandler = new VerificationBanHandler();
+        this.dynamicCommandHandler = new DynamicCommandHandler();
         this.discordRestClient = new REST().setToken(settings.discord.token);
     }
 
@@ -84,11 +87,7 @@ class KahukuraApplication {
             if (member.guild.id !== settings.discord.guildID) return;
 
             try {
-                const commands = await this.client.application?.commands.fetch();
-                const verifyCommandID = commands?.find(
-                    (command) => command.name === "verify"
-                )?.id;
-
+                const verifyCommandID = await this.dynamicCommandHandler.getVerifyCommand(this.client);
                 this.verificationJoinHandler.handleJoin(member, verifyCommandID);
             } catch (error) {
                 console.error("Error fetching commands for GuildMemberAdd:", error);

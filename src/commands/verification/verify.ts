@@ -6,8 +6,10 @@ import MongoDb from "../../utils/mongo";
 import { createTransport } from "nodemailer";
 import settings from "../../../settings.json";
 import DirectMessageHandler from "../../handlers/directMessageHandler";
+import DynamicCommandHandler from "../../handlers/dynamicCommandHandler";
 
 const directMessageHandler = new DirectMessageHandler();
+const dynamicCommandHandler = new DynamicCommandHandler();
 
 export default class VerifyCommand implements Command {
     name = "verify";
@@ -39,7 +41,7 @@ export default class VerifyCommand implements Command {
 
         await directMessageHandler.deleteOldVerificationMessage(interaction.user, interaction.client);
 
-        const verificationCodeCommand = await this.getVerifyCodeCommand(interaction.client);
+        const verificationCodeCommand = await dynamicCommandHandler.getVerifyCodeCommand(interaction.client);
 
         // Generate a new verification code
         const verificationCode = this.generateVerificationCode();
@@ -109,17 +111,5 @@ export default class VerifyCommand implements Command {
 
     private generateVerificationCode(): number {
         return Math.floor(100000 + Math.random() * 900000); // 6-digit code
-    }
-
-    private async getVerifyCodeCommand(client: Client) {
-        const commands = await client.application?.commands.fetch();
-        const verifyCodeCommandID = commands?.find(
-            (command) => command.name === "code"
-        )?.id;
-        
-        
-        return verifyCodeCommandID
-            ? `</code:${verifyCodeCommandID}>`
-            : "/code";
     }
 }

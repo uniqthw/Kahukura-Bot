@@ -1,9 +1,12 @@
 // Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
 import { Command } from "../../../@types";
-import { ChatInputCommandInteraction, Client, Guild, SlashCommandBuilder, Snowflake } from "discord.js";
+import { ChatInputCommandInteraction, Guild, SlashCommandBuilder, Snowflake } from "discord.js";
 import MongoDb from "../../utils/mongo";
 import settings from "../../../settings.json";
+import DynamicCommandHandler from "../../handlers/dynamicCommandHandler";
+
+const dynamicCommandHandler = new DynamicCommandHandler();
 
 export default class CodeCommand implements Command {
     name = "code";
@@ -38,7 +41,7 @@ export default class CodeCommand implements Command {
         const { verificationData } = verificationUser;
 
         if (verificationData.code !== code) {
-            const verificationCommand = await this.getVerifyCommand(interaction.client);
+            const verificationCommand = await dynamicCommandHandler.getVerifyCommand(interaction.client);
 
             return await interaction.editReply({
                 content: `The verification code you entered is incorrect. If required, please request a new one by re-running the ${verificationCommand} command.`
@@ -46,7 +49,7 @@ export default class CodeCommand implements Command {
         }
 
         if (Date.now() > verificationData.expiresAt) {
-            const verificationCommand = await this.getVerifyCommand(interaction.client);
+            const verificationCommand = await dynamicCommandHandler.getVerifyCommand(interaction.client);
 
             return await interaction.editReply({
                 content: `The verification code has expired. Please request a new one by re-running the ${verificationCommand} command.`
@@ -101,17 +104,5 @@ export default class CodeCommand implements Command {
                 }
             }
         });
-    }
-
-    private async getVerifyCommand(client: Client) {
-        const commands = await client.application?.commands.fetch();
-        const verifyCodeCommandID = commands?.find(
-            (command) => command.name === "verify"
-        )?.id;
-        
-        
-        return verifyCodeCommandID
-            ? `</verify:${verifyCodeCommandID}>`
-            : "/verify";
     }
 }
