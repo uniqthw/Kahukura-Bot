@@ -102,6 +102,15 @@ export default class MongoDb {
             .deleteOne({ _id: id });
     }
 
+    async updateVerificationUserLatestDataRequest(
+        id: Snowflake,
+        lastDataRequest: DBVerificationUser["lastDataRequest"]
+    ): Promise<void> {
+        await this.db
+            .collection<DBVerificationUser>("verification")
+            .updateOne({ _id: id }, { $set: { lastDataRequest: lastDataRequest } });
+    }
+
     // Verification message cache methods, should only be used for messages sent within the Discord server
 
     async setCacheVerificationMessage(memberId: Snowflake, messageId: Snowflake): Promise<void> {

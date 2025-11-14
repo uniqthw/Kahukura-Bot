@@ -5,7 +5,8 @@
   "main": "app.ts",
   "scripts": {
     "start": "ts-node src/app.ts",
-    "pretty": "pnpm exec prettier src/ --write"
+    "pretty": "pnpm exec prettier src/ --write",
+    "build": "rm -rf dist && tsc"
   },
   "repository": {
     "type": "git",

@@ -76,10 +76,17 @@ class KahukuraApplication {
         });
 
         // Receives any client interaction events and runs them through handleInteraction() in InteractionHandler
-        this.client.on(Events.InteractionCreate, (interaction) => {
-            this.interactionHandler.handleInteraction(
-                interaction as ChatInputCommandInteraction
-            );
+        this.client.on(Events.InteractionCreate, async (interaction) => {
+            // Only handle chat input (slash) commands, ignore button interactions and other types
+            if (interaction.isChatInputCommand()) {
+                try {
+                    await this.interactionHandler.handleInteraction(
+                        interaction as ChatInputCommandInteraction
+                    );
+                } catch (error) {
+                    console.error("Error handling interaction:", error);
+                }
+            }
         });
 
         // When a person joins a guild, this event will trigger which will add the unverified role

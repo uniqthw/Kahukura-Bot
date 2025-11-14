@@ -3,14 +3,16 @@
         "token": "your-bot-token",
         "guildID": "your-server-guildID",
         "rolesID": {
-            "unverified": "your-server-unverified-roleID"
+            "unverified": "your-server-unverified-roleID",
+            "moderator": "your-server-moderator-roleID"
         },
         "channelsID": {
             "unverified": "your-server-unverified-channelID",
             "socials": "your-server-socials-news-channelID"
         },
         "usersID": {
-            "checkuser": ["array-of-your-checkusers-discord-user-ids"]
+            "checkuser": ["array-of-your-checkusers-discord-user-ids"],
+            "itadmins": ["array-of-your-itadmins-discord-user-ids"]
         },
         "webhook": {
             "socials": "your-server-socials-news-channel-webhook-url"
