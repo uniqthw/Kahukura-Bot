@@ -25,7 +25,7 @@ export default class CodeCommand implements Command {
         const userId = interaction.user.id;
         const guild = await interaction.client.guilds.fetch(settings.discord.guildID);
 
-        if (!guild) return console.error("Guild not found.");
+        if (!guild) throw new Error("Guild not found check settings.discord.guildID and bot guild membership.");
 
         // Check if the user has a pending verification code
         const verificationUser = await MongoDb.getInstance().getVerificationUser(userId);
