@@ -1,8 +1,9 @@
-import { Command } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, PermissionFlagsBits } from "discord.js";
-import { hasModeratorRole } from "../../utils/roleCheck";
-import { logModAction } from "../../utils/modlog";
-import settings from "../../../settings.json";
+import { Command, ModLogActions } from "../../../@types";
+import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits, userMention } from "discord.js";
+import parse from "parse-duration";
+
+import ModLoggingHandler from '../../handlers/modLoggingHandler';
+const modLoggingHandler = new ModLoggingHandler;
 
 export default class MuteCommand implements Command {
     name = "mute";
@@ -12,56 +13,53 @@ export default class MuteCommand implements Command {
         .setDescription(this.description)
         .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
         .addUserOption(option =>
-            option.setName("user").setDescription("User to mute").setRequired(true)
-        )
-        .addIntegerOption(option =>
-            option.setName("duration").setDescription("Mute duration in minutes").setRequired(true)
+            option.setName("user").setDescription("Specify the user you are timing out.").setRequired(true)
         )
         .addStringOption(option =>
-            option.setName("reason").setDescription("Reason for mute").setRequired(false)
+            option.setName("duration").setDescription("Specify the duration for which you are timing the user out (i.e., \"1 hr 20 mins\")").setRequired(true)
+        )
+        .addStringOption(option =>
+            option.setName("reason").setDescription("Please provide a justification for timing out this user.").setRequired(false)
         ) as SlashCommandBuilder);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {
         // Always defer reply for interaction timing
         await interaction.deferReply({ ephemeral: true });
-        const member = interaction.member as GuildMember;
+
+        if (!interaction.guild) return await interaction.editReply("This command needs to be executed within the server.");
         
-        // Permission check: must have moderator role
-        if (!hasModeratorRole(member)) {
-            return await interaction.editReply({ content: "You do not have permission to use this command." });
-        }
-        
-        // Get command options
         const user = interaction.options.getUser("user", true);
-        const duration = interaction.options.getInteger("duration", true);
-        const reason = interaction.options.getString("reason") || "No reason provided";
+        const rawDuration = interaction.options.getString("duration", true);
+        const reason = interaction.options.getString("reason", true);
+
+        const duration = parse(rawDuration);
+        if (!duration || duration >= 600000 || duration >= 2419200000) return await interaction.editReply("The specified duration is invalid (must be at least 60 seconds, and shorter than 28 days).");
         
         try {
-            // Mute user with Discord timeout
-            const guildMember = await interaction.guild?.members.fetch(user.id);
-            if (!guildMember) throw new Error("User not found in guild.");
-            
-            await guildMember.timeout(duration * 60 * 1000, `Muted by ${member.user.tag}: ${reason}`);
-            
+            // Timeout user
+            const member = await interaction.guild.members.fetch(user.id);
+            if (!member) return await interaction.editReply("The target user is not in the server.");
+
+            member.timeout(duration, reason)
+
             // Log moderation action
-            await logModAction({
-                action: "mute",
-                targetId: user.id,
-                targetTag: user.tag,
-                moderatorId: member.user.id,
-                moderatorTag: member.user.tag,
+            await modLoggingHandler.logModAction({
+                action: ModLogActions.TIMEOUT,
+                target: user,
+                moderator: interaction.user,
                 reason,
-                duration,
                 timestamp: Date.now(),
-                guildId: interaction.guild?.id || ""
-            });
+                duration: {
+                    length: duration,
+                    expiry: Date.now() + duration
+                }
+            }, interaction.client);
             
             return await interaction.editReply({ 
-                content: `User <@${user.id}> has been muted for ${duration} minutes. Reason: ${reason}` 
+                content: `${userMention(user.id)} has been timed out.` 
             });
         } catch (err) {
-            // Error handling
-            return await interaction.editReply({ content: `Failed to mute user: ${err}` });
+            return await interaction.editReply({ content: `Failed to timeout user: ${err}` });
         }
     }
 }

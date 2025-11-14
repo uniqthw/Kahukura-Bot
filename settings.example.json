@@ -8,7 +8,8 @@
         },
         "channelsID": {
             "unverified": "your-server-unverified-channelID",
-            "socials": "your-server-socials-news-channelID"
+            "socials": "your-server-socials-news-channelID",
+            "modPunishmentLog": ""
         },
         "usersID": {
             "checkuser": ["array-of-your-checkusers-discord-user-ids"],

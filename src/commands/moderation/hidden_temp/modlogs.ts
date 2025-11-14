@@ -1,8 +1,6 @@
-import { Command } from "../../../@types";
+import { Command } from "../../../../@types";
 import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, EmbedBuilder, PermissionFlagsBits } from "discord.js";
-import { hasModeratorRole } from "../../utils/roleCheck";
-import { getModLogs } from "../../utils/modlog";
-import settings from "../../../settings.json";
+import settings from "../../../../settings.json";
 
 export default class ModlogsCommand implements Command {
     name = "modlogs";

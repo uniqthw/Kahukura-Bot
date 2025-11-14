@@ -1,21 +1,9 @@
 // Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
-import { Db, MongoClient } from "mongodb";
+import { Db, InsertOneResult, MongoClient } from "mongodb";
 import settings from "../../settings.json";
 import { Snowflake } from "discord.js";
-import { DBVerificationUser, VerificationMessageCache } from "../../@types";
-
-export interface ModLogEntry {
-    action: string;
-    targetId: string;
-    targetTag: string;
-    moderatorId: string;
-    moderatorTag: string;
-    reason: string;
-    duration?: number;
-    timestamp: number;
-    guildId: string;
-}
+import { DBModLogEntry, DBVerificationUser, ModLogEntry, VerificationMessageCache } from "../../@types";
 
 export default class MongoDb {
     private static instance: MongoDb;
@@ -138,8 +126,18 @@ export default class MongoDb {
     }
 
     // Moderation Log Methods
-    async insertModLog(entry: ModLogEntry): Promise<void> {
-        await this.db.collection<ModLogEntry>("modlogs").insertOne(entry);
+    async insertModLog(entry: ModLogEntry): Promise<InsertOneResult<DBModLogEntry>> {
+        if (!entry._id) throw new Error("_id must be specified when using the insertModLog() method.");
+
+        return await this.db.collection<DBModLogEntry>("modlogs").insertOne({
+            _id: entry._id,
+            action: entry.action,
+            targetId: entry.target.id,
+            moderatorId: entry.moderator.id,
+            reason: entry.reason,
+            duration: entry.duration,
+            timestamp: entry.timestamp
+        });
     }
 
     async getModLogs(targetId?: string, limit: number = 10): Promise<ModLogEntry[]> {

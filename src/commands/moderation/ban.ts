@@ -1,8 +1,9 @@
-import { Command } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, PermissionFlagsBits } from "discord.js";
-import { hasModeratorRole } from "../../utils/roleCheck";
-import { logModAction } from "../../utils/modlog";
-import settings from "../../../settings.json";
+import { Command, ModLogActions } from "../../../@types";
+import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits, InteractionContextType, userMention, Client } from "discord.js";
+
+import ModLoggingHandler from "../../handlers/modLoggingHandler";
+
+const modLoggingHandler = new ModLoggingHandler();
 
 export default class BanCommand implements Command {
     name = "ban";
@@ -11,56 +12,41 @@ export default class BanCommand implements Command {
         .setName(this.name)
         .setDescription(this.description)
         .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
+        .setContexts(InteractionContextType.Guild)
         .addUserOption(option =>
-            option.setName("user").setDescription("User to ban").setRequired(true)
+            option.setName("user").setDescription("Specify the user you are banning.").setRequired(true)
         )
         .addStringOption(option =>
-            option.setName("reason").setDescription("Reason for ban").setRequired(false)
-        )
-        .addIntegerOption(option =>
-            option.setName("delete_days").setDescription("Days of messages to delete (0-7)").setRequired(false)
+            option.setName("reason").setDescription("Please provide a justification for banning this user.").setRequired(true)
         ) as SlashCommandBuilder);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {
-        // Always defer reply for interaction timing
         await interaction.deferReply({ ephemeral: true });
-        const member = interaction.member as GuildMember;
         
-        // Permission check: must have moderator role
-        if (!hasModeratorRole(member)) {
-            return await interaction.editReply({ content: "You do not have permission to use this command." });
-        }
+        if (!interaction.guild) return await interaction.editReply("This command needs to be executed within the server.");
         
-        // Get command options
         const user = interaction.options.getUser("user", true);
-        const reason = interaction.options.getString("reason") || "No reason provided";
-        const deleteDays = interaction.options.getInteger("delete_days") || 0;
-        
+        const reason = interaction.options.getString("reason", true);
+
         try {
             // Ban user
-            await interaction.guild?.members.ban(user.id, { 
-                reason: `Banned by ${member.user.tag}: ${reason}`,
-                deleteMessageDays: Math.min(Math.max(deleteDays, 0), 7) // Clamp between 0-7
-            });
+            await interaction.guild.members.ban(user.id, { reason });
             
             // Log moderation action
-            await logModAction({
-                action: "ban",
-                targetId: user.id,
-                targetTag: user.tag,
-                moderatorId: member.user.id,
-                moderatorTag: member.user.tag,
+            await modLoggingHandler.logModAction({
+                action: ModLogActions.BAN,
+                target: user,
+                moderator: interaction.user,
                 reason,
-                timestamp: Date.now(),
-                guildId: interaction.guild?.id || ""
-            });
+                timestamp: Date.now()
+            }, interaction.client);
             
             return await interaction.editReply({ 
-                content: `User <@${user.id}> has been banned. Reason: ${reason}` 
+                content: `${userMention(user.id)} has been banned.` 
             });
         } catch (err) {
-            // Error handling
-            return await interaction.editReply({ content: `Failed to ban user: ${err}` });
+            await interaction.editReply("Failed to ban user.");
+            return console.error("Failed to ban user:", err)
         }
     }
 }

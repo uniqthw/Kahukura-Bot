@@ -8,18 +8,30 @@ importers:
 
   .:
     dependencies:
+      '@akashrajpurohit/snowflake-id':
+        specifier: ^2.0.0
+        version: 2.0.0
+      '@types/humanize-duration':
+        specifier: ^3.27.4
+        version: 3.27.4
       '@types/nodemailer':
         specifier: ^7.0.3
         version: 7.0.3
       discord.js:
         specifier: ^14.24.2
         version: 14.24.2
+      humanize-duration:
+        specifier: ^3.33.1
+        version: 3.33.1
       mongodb:
         specifier: ^7.0.0
         version: 7.0.0
       nodemailer:
         specifier: ^7.0.10
         version: 7.0.10
+      parse-duration:
+        specifier: ^2.1.4
+        version: 2.1.4
     devDependencies:
       prettier:
         specifier: 3.6.2
@@ -32,6 +44,9 @@ importers:
         version: 5.9.3
 
 packages:
+
+  '@akashrajpurohit/snowflake-id@2.0.0':
+    resolution: {integrity: sha512-9En2OKHBOO39vztHUxHUh/Xh6wTI1lEQ9c0ivr7QX3ozaKgs770TRJrgtBbQBeLLbMoLGG3fBk3otAlSY440pw==}
 
   '@aws-crypto/sha256-browser@5.2.0':
     resolution: {integrity: sha512-AXfN/lGotSQwu6HNcEsIASo7kWXZ5HYWvfOmSNKDsEqC4OashTp8alTmaz+F7TC2L083SFv5RdB+qU3Vs1kZqw==}
@@ -399,6 +414,9 @@ packages:
   '@tsconfig/node16@1.0.4':
     resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
 
+  '@types/humanize-duration@3.27.4':
+    resolution: {integrity: sha512-yaf7kan2Sq0goxpbcwTQ+8E9RP6HutFBPv74T/IA/ojcHKhuKVlk2YFYyHhWZeLvZPzzLE3aatuQB4h0iqyyUA==}
+
   '@types/node@20.19.25':
     resolution: {integrity: sha512-ZsJzA5thDQMSQO788d7IocwwQbI8B5OPzmqNvpf3NY/+MHDAS759Wo0gd2WQeXYt5AAAQjzcrTVC6SKCuYgoCQ==}
 
@@ -461,6 +479,9 @@ packages:
     resolution: {integrity: sha512-pfX9uG9Ki0yekDHx2SiuRIyFdyAr1kMIMitPvb0YBo8SUfKvia7w7FIyd/l6av85pFYRhZscS75MwMnbvY+hcQ==}
     hasBin: true
 
+  humanize-duration@3.33.1:
+    resolution: {integrity: sha512-hwzSCymnRdFx9YdRkQQ0OYequXiVAV6ZGQA2uzocwB0F4309Ke6pO8dg0P8LHhRQJyVjGteRTAA/zNfEcpXn8A==}
+
   lodash.snakecase@4.1.1:
     resolution: {integrity: sha512-QZ1d4xoBHYUeuouhEq3lk3Uq7ldgyFXGBhg04+oRLnIz8o9T65Eh+8YdroUwn846zchkA9yDsDl5CVVaV2nqYw==}
 
@@ -510,6 +531,9 @@ packages:
   nodemailer@7.0.10:
     resolution: {integrity: sha512-Us/Se1WtT0ylXgNFfyFSx4LElllVLJXQjWi2Xz17xWw7amDKO2MLtFnVp1WACy7GkVGs+oBlRopVNUzlrGSw1w==}
     engines: {node: '>=6.0.0'}
+
+  parse-duration@2.1.4:
+    resolution: {integrity: sha512-b98m6MsCh+akxfyoz9w9dt0AlH2dfYLOBss5SdDsr9pkhKNvkWBXU/r8A4ahmIGByBOLV2+4YwfCuFxbDDaGyg==}
 
   prettier@3.6.2:
     resolution: {integrity: sha512-I7AIg5boAr5R0FFtJ6rCfD+LFsWHp81dolrFD8S79U9tb8Az2nGrJncnMSnys+bpQJfRUzqs9hnA81OAA3hCuQ==}
@@ -593,6 +617,8 @@ packages:
     engines: {node: '>=6'}
 
 snapshots:
+
+  '@akashrajpurohit/snowflake-id@2.0.0': {}
 
   '@aws-crypto/sha256-browser@5.2.0':
     dependencies:
@@ -1333,6 +1359,8 @@ snapshots:
 
   '@tsconfig/node16@1.0.4': {}
 
+  '@types/humanize-duration@3.27.4': {}
+
   '@types/node@20.19.25':
     dependencies:
       undici-types: 6.21.0
@@ -1403,6 +1431,8 @@ snapshots:
     dependencies:
       strnum: 2.1.1
 
+  humanize-duration@3.33.1: {}
+
   lodash.snakecase@4.1.1: {}
 
   lodash@4.17.21: {}
@@ -1425,6 +1455,8 @@ snapshots:
       mongodb-connection-string-url: 7.0.0
 
   nodemailer@7.0.10: {}
+
+  parse-duration@2.1.4: {}
 
   prettier@3.6.2: {}
 

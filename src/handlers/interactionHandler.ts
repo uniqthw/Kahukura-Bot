@@ -26,13 +26,6 @@ import UnbanCommand from "../commands/moderation/unban";
 import KickCommand from "../commands/moderation/kick";
 import MuteCommand from "../commands/moderation/mute";
 import UnmuteCommand from "../commands/moderation/unmute";
-import WarnCommand from "../commands/moderation/warn";
-import PurgeCommand from "../commands/moderation/purge";
-import LockCommand from "../commands/moderation/lock";
-import UnlockCommand from "../commands/moderation/unlock";
-import SlowmodeCommand from "../commands/moderation/slowmode";
-import ModlogsCommand from "../commands/moderation/modlogs";
-import UserinfoCommand from "../commands/moderation/userinfo";
 
 export default class InteractionHandler {
     private commands: Command[];
@@ -47,13 +40,13 @@ export default class InteractionHandler {
             new ManualVerifyCommand(),
             new SocialCommand(),
             new DeleteUserData(),
-            new MyUserDataCommand()
+            new MyUserDataCommand(),
             // Moderation Commands
-            // new BanCommand(),
-            // new UnbanCommand(),
-            // new KickCommand(),
-            // new MuteCommand(),
-            // new UnmuteCommand(),
+            new BanCommand(),
+            new UnbanCommand(),
+            new KickCommand(),
+            new MuteCommand(),
+            new UnmuteCommand(),
             // new WarnCommand(),
             // new PurgeCommand(),
             // new LockCommand(),
