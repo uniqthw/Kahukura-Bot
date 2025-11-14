@@ -78,7 +78,7 @@ export default class CodeCommand implements Command {
                     }
                 }
             } catch (error) {
-                console.error(`Failed to fetch member or remove unverified role for user ID ${interaction.id}:`, error);
+                console.error(`Failed to fetch member or remove unverified role for user ID ${userId}:`, error);
             }
         }
 
