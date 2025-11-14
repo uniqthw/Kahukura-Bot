@@ -49,7 +49,7 @@ export default class VerificationJoinHandler {
             this.directMessageHandler.handleMessage(member, {
                 content: `E hoa, your account is flagged as banned in UniQ Te Herenga Waka's verification database. Please contact [discord@uniqthw.org.nz](mailto:discord@uniqthw.org.nz) to appeal.`,
                 allowedMentions: { users: [member.id] }
-            }, false);
+            }, false, false);
 
             await member.ban({
                 reason: "User's account is flagged as banned in the verification database."

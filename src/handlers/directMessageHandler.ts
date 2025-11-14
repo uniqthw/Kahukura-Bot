@@ -5,7 +5,7 @@ import settings from "../../settings.json";
 import MongoDb from "../utils/mongo";
 
 export default class DirectMessageHandler {
-    async handleMessage(member: GuildMember, message: string | MessageCreateOptions, graceful: boolean, verificationMessage?: boolean): Promise<void> {
+    async handleMessage(member: GuildMember, message: string | MessageCreateOptions, graceful: boolean, verificationMessage: boolean): Promise<void> {
         try {
             if (!graceful) return;
 
