@@ -3,13 +3,19 @@
 import { ChatInputCommandInteraction } from "discord.js";
 import { Command } from "../../@types";
 
+// Legal commands
 import TermsCommand from "../commands/legal/terms";
 import PrivacyCommand from "../commands/legal/privacy";
+import DeleteUserData from "../commands/itadmin/deleteUserData";
+
+// Verification commands
 import VerifyCommand from "../commands/verification/verify";
 import CodeCommand from "../commands/verification/code";
 import LookupCommand from "../commands/verification/lookup";
 import ManualVerifyCommand from "../commands/verification/manualVerify";
-import DeleteUserData from "../commands/itadmin/deleteUserData";
+
+// Miscellaneous commands
+import SocialCommand from "../commands/misc/socials";
 
 // Moderation Commands
 import BanCommand from "../commands/moderation/ban";
@@ -36,6 +42,7 @@ export default class InteractionHandler {
             new CodeCommand(),
             new LookupCommand(),
             new ManualVerifyCommand(),
+            new SocialCommand(),
             // new DeleteUserData(),
             // Moderation Commands
             // new BanCommand(),

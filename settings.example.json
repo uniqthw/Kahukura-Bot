@@ -13,7 +13,7 @@
             "checkuser": ["array-of-your-checkusers-discord-user-ids"]
         },
         "webhook": {
-            "socials": "your-server-socials-news-webhook"
+            "socials": "your-server-socials-news-channel-webhook-url"
         }
     },
     "email": {
