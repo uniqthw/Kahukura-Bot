@@ -96,7 +96,7 @@ export default class MyUserDataCommand implements Command {
 
         const lookupFileContent = JSON.stringify(sanitisedData);
 
-        const fileUri = Buffer.from(lookupFileContent.trimStart()).toString("base64");
+        const fileUri = Buffer.from(lookupFileContent).toString("base64");
 
         return fileUri;
     }
