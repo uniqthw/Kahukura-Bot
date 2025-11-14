@@ -16,7 +16,7 @@ export default class KickCommand implements Command {
             option.setName("user").setDescription("Specify the user you are kicking.").setRequired(true)
         )
         .addStringOption(option =>
-            option.setName("reason").setDescription("Please provide a justification for kicking this user.").setRequired(false)
+            option.setName("reason").setDescription("Please provide a justification for kicking this user.").setRequired(true)
         ) as SlashCommandBuilder);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {

@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@akashrajpurohit/snowflake-id':
-        specifier: ^2.0.0
-        version: 2.0.0
       '@types/humanize-duration':
         specifier: ^3.27.4
         version: 3.27.4
@@ -44,9 +41,6 @@ importers:
         version: 5.9.3
 
 packages:
-
-  '@akashrajpurohit/snowflake-id@2.0.0':
-    resolution: {integrity: sha512-9En2OKHBOO39vztHUxHUh/Xh6wTI1lEQ9c0ivr7QX3ozaKgs770TRJrgtBbQBeLLbMoLGG3fBk3otAlSY440pw==}
 
   '@aws-crypto/sha256-browser@5.2.0':
     resolution: {integrity: sha512-AXfN/lGotSQwu6HNcEsIASo7kWXZ5HYWvfOmSNKDsEqC4OashTp8alTmaz+F7TC2L083SFv5RdB+qU3Vs1kZqw==}
@@ -617,8 +611,6 @@ packages:
     engines: {node: '>=6'}
 
 snapshots:
-
-  '@akashrajpurohit/snowflake-id@2.0.0': {}
 
   '@aws-crypto/sha256-browser@5.2.0':
     dependencies:

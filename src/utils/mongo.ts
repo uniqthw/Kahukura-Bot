@@ -127,10 +127,7 @@ export default class MongoDb {
 
     // Moderation Log Methods
     async insertModLog(entry: ModLogEntry): Promise<InsertOneResult<DBModLogEntry>> {
-        if (!entry._id) throw new Error("_id must be specified when using the insertModLog() method.");
-
         return await this.db.collection<DBModLogEntry>("modlogs").insertOne({
-            _id: entry._id,
             action: entry.action,
             targetId: entry.target.id,
             moderatorId: entry.moderator.id,

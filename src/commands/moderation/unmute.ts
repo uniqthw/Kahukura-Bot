@@ -15,7 +15,7 @@ export default class UnmuteCommand implements Command {
             option.setName("user").setDescription("Specify the user you are un-timing out.").setRequired(true)
         )
         .addStringOption(option =>
-            option.setName("reason").setDescription("Please provide a justification for un-timing out this user.").setRequired(false)
+            option.setName("reason").setDescription("Please provide a justification for un-timing out this user.").setRequired(true)
         ) as SlashCommandBuilder);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {

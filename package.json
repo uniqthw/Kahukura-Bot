@@ -32,7 +32,6 @@
   "homepage": "https://github.com/uniqthw/Kahukura-Bot#readme",
   "packageManager": "pnpm@10.22.0",
   "dependencies": {
-    "@akashrajpurohit/snowflake-id": "^2.0.0",
     "@types/humanize-duration": "^3.27.4",
     "@types/nodemailer": "^7.0.3",
     "discord.js": "^14.24.2",

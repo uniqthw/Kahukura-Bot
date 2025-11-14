@@ -19,7 +19,7 @@ export default class MuteCommand implements Command {
             option.setName("duration").setDescription("Specify the duration for which you are timing the user out (i.e., \"1 hr 20 mins\")").setRequired(true)
         )
         .addStringOption(option =>
-            option.setName("reason").setDescription("Please provide a justification for timing out this user.").setRequired(false)
+            option.setName("reason").setDescription("Please provide a justification for timing out this user.").setRequired(true)
         ) as SlashCommandBuilder);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {
@@ -33,7 +33,7 @@ export default class MuteCommand implements Command {
         const reason = interaction.options.getString("reason", true);
 
         const duration = parse(rawDuration);
-        if (!duration || duration >= 600000 || duration >= 2419200000) return await interaction.editReply("The specified duration is invalid (must be at least 60 seconds, and shorter than 28 days).");
+        if (!duration || duration < 60000 || duration >= 2419200000) return await interaction.editReply("The specified duration is invalid (must be at least 60 seconds, and shorter than 28 days).");
         
         try {
             // Timeout user

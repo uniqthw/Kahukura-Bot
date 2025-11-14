@@ -3,7 +3,6 @@
 import { Client, ContainerBuilder, TextDisplayBuilder, userMention } from "discord.js";
 import { ModLogEntry } from "../../@types";
 import MongoDb from "../utils/mongo";
-import { SnowflakeId } from "@akashrajpurohit/snowflake-id";
 import { ModLogActions } from '../../@types/index';
 import humanizeDuration from "humanize-duration";
 import settings from "../../settings.json";
@@ -19,10 +18,9 @@ enum ModLogColours {
 
 export default class ModLoggingHandler {
     async logModAction(rawEntry: ModLogEntry, client: Client): Promise<void> {
+        const modLogDB = await MongoDb.getInstance().insertModLog(rawEntry);
         const entry = rawEntry;
-        entry._id = SnowflakeId({ epoch: Date.now() }).generate();
-
-        await MongoDb.getInstance().insertModLog(entry);
+        entry._id = modLogDB.insertedId;
 
         // Build the base text display components
         const textDisplayComponents = [
@@ -53,7 +51,11 @@ export default class ModLoggingHandler {
         if (!modLogChannel || !modLogChannel.isTextBased() || !modLogChannel.isSendable()) throw new Error("Failed to log punishment to mod log channel. Likely misconfiguration, ensure settings.json is appropiately filled out and the bot has access to send messages in the channel.")
         
         await modLogChannel.sendTyping();
-        await modLogChannel.send({ components: components });
+        try {
+            await modLogChannel.send({ components: components });
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     private getLogAccentColour(logType: ModLogActions) {

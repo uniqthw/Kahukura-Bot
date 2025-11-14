@@ -44,7 +44,7 @@ export interface VerificationUserCheck {
 }
 
 export interface DBModLogEntry {
-    _id: string;
+    _id?: string;
     action: ModLogActions;
     targetId: string;
     moderatorId: string;
