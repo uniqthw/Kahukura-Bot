@@ -4,6 +4,13 @@ import MongoDb, { ModLogEntry } from "./mongo";
 
 export { ModLogEntry };
 
+/**
+ * Persist a moderation log entry to the database.
+ *
+ * If storing fails, the error is logged to the console and not propagated.
+ *
+ * @param entry - The moderation log entry to persist.
+ */
 export async function logModAction(entry: ModLogEntry): Promise<void> {
     try {
         const db = MongoDb.getInstance();

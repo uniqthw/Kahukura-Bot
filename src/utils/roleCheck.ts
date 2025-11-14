@@ -13,6 +13,12 @@ export function hasModeratorRole(member: GuildMember): boolean {
     return member.roles.cache.has(moderatorRoleId);
 }
 
+/**
+ * Determines whether the provided user is listed as a checkuser in the configuration.
+ *
+ * @param user - The Discord user to check.
+ * @returns `true` if the user's ID is present in settings.discord.usersID.checkuser, `false` otherwise.
+ */
 export function isCheckuser(user: User): boolean {
     const checkuserArray = settings.discord.usersID.checkuser;
 
