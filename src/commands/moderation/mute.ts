@@ -1,6 +1,6 @@
 import { Command } from "../../../@types";
 import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, PermissionFlagsBits } from "discord.js";
-import { hasModeratorRole } from "../../utils/modRoleCheck";
+import { hasModeratorRole } from "../../utils/roleCheck";
 import { logModAction } from "../../utils/modlog";
 import settings from "../../../settings.json";
 
@@ -28,7 +28,7 @@ export default class MuteCommand implements Command {
         
         // Permission check: must have moderator role
         if (!hasModeratorRole(member)) {
-            return interaction.editReply({ content: "You do not have permission to use this command." });
+            return await interaction.editReply({ content: "You do not have permission to use this command." });
         }
         
         // Get command options
@@ -56,12 +56,12 @@ export default class MuteCommand implements Command {
                 guildId: interaction.guild?.id || ""
             });
             
-            return interaction.editReply({ 
+            return await interaction.editReply({ 
                 content: `User <@${user.id}> has been muted for ${duration} minutes. Reason: ${reason}` 
             });
         } catch (err) {
             // Error handling
-            return interaction.editReply({ content: `Failed to mute user: ${err}` });
+            return await interaction.editReply({ content: `Failed to mute user: ${err}` });
         }
     }
 }

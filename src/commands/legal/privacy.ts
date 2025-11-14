@@ -15,13 +15,13 @@ export default class PrivacyCommand implements Command {
         Provides an emphemeral response with an embed of Kahukura Bot's privacy policy.
     */
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {
-        return interaction.reply({
+        return await interaction.reply({
             ephemeral: true,
             embeds: [
                 {
                     title: "Kahukura Bot | Privacy Policy",
                     description:
-                        '**"Association"** refers to The Queer Students\' Association of Te Herenga Waka Victoria University of Wellington Incorporated.',
+                        '### Last updated on 14 November 2025.\n**"Association"** refers to The Queer Students\' Association of Te Herenga Waka Victoria University of Wellington Incorporated.',
                     color: 0xff5cb3,
                     fields: [
                         {
@@ -30,11 +30,11 @@ export default class PrivacyCommand implements Command {
                         },
                         {
                             name: "👥 Sharing of information",
-                            value: "Outside of the Association's officers and its Discord team, we may share this information with Te Herenga Waka—Victoria University of Wellington in order to:\n\n- take action when harm occurs that is required to be dealt with through the Student Interest and Conflict Resolution team; or \n- to take action where a person poses an imminent risk of harming themselves or others."
+                            value: "Outside of the Association's officers and its Discord team, we may share this information with Te Herenga Waka—Victoria University of Wellington or an emergency service in order to:\n\n- take action when harm occurs that is required to be dealt with through the Student Interest and Conflict Resolution team; or \n- to take action where a person poses an imminent risk of harming themselves or others."
                         },
                         {
                             name: "ℹ️ Miscellaneous",
-                            value: "We keep your information safe by storing it in a secured database and only allowing the Vice-President (Administration and Finance) direct access to the database.\n\nYou have the right to ask for a copy of any personal information we hold about you, and to ask for it to be corrected if you think it is wrong. If you'd like to ask for a copy of your information, or to have it corrected, please contact us at info@uniqthw.org.nz."
+                            value: "We keep your information safe by storing it in a secured database and only allowing the Vice-President (Administration and Finance) and their delegates direct access to the database.\n\nYou have the right to ask for a copy of any personal information we hold about you, and to ask for it to be corrected if you think it is wrong. If you'd like to ask for a copy of your information, or to have it corrected, please contact us at [itadmin@uniqthw.org.nz](mailto:itadmin@uniqthw.org.nz)."
                         }
                     ]
                 }

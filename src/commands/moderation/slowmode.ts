@@ -1,6 +1,6 @@
 import { Command } from "../../../@types";
 import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, TextChannel, PermissionFlagsBits } from "discord.js";
-import { hasModeratorRole } from "../../utils/modRoleCheck";
+import { hasModeratorRole } from "../../utils/roleCheck";
 import { logModAction } from "../../utils/modlog";
 import settings from "../../../settings.json";
 
@@ -25,7 +25,7 @@ export default class SlowmodeCommand implements Command {
         
         // Permission check: must have moderator role
         if (!hasModeratorRole(member)) {
-            return interaction.editReply({ content: "You do not have permission to use this command." });
+            return await interaction.editReply({ content: "You do not have permission to use this command." });
         }
         
         // Get command options
@@ -35,7 +35,7 @@ export default class SlowmodeCommand implements Command {
         
         // Validate slowmode duration (Discord limit is 21600 seconds = 6 hours)
         if (seconds < 0 || seconds > 21600) {
-            return interaction.editReply({ content: "Slowmode duration must be between 0 and 21600 seconds (6 hours)." });
+            return await interaction.editReply({ content: "Slowmode duration must be between 0 and 21600 seconds (6 hours)." });
         }
         
         try {
@@ -59,10 +59,10 @@ export default class SlowmodeCommand implements Command {
                 ? `Slowmode disabled in <#${channel.id}>. Reason: ${reason}`
                 : `Slowmode set to ${seconds} seconds in <#${channel.id}>. Reason: ${reason}`;
             
-            return interaction.editReply({ content: message });
+            return await interaction.editReply({ content: message });
         } catch (err) {
             // Error handling
-            return interaction.editReply({ content: `Failed to set slowmode: ${err}` });
+            return await interaction.editReply({ content: `Failed to set slowmode: ${err}` });
         }
     }
 }

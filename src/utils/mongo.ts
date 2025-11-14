@@ -3,7 +3,7 @@
 import { Db, MongoClient } from "mongodb";
 import settings from "../../settings.json";
 import { Snowflake } from "discord.js";
-import { DBVerificationUser } from "../../@types";
+import { DBVerificationUser, VerificationMessageCache } from "../../@types";
 
 export interface ModLogEntry {
     action: string;
@@ -48,7 +48,8 @@ export default class MongoDb {
                 email: user.email,
                 verified: user.verified,
                 banned: user.banned,
-                verificationData: user.verificationData
+                verificationData: user.verificationData,
+                manualVerificationData: user.manualVerificationData
             }
         }, { upsert: true });
     }
@@ -103,15 +104,29 @@ export default class MongoDb {
 
     // Verification message cache methods, should only be used for messages sent within the Discord server
 
-    // async cacheVerificationMessage(memberId: Snowflake, messageId: Snowflake): Promise<void> {
-    //     const verificationMessageCache = await this.db
-    //         .collection<DBVerificationUser>("verificationMessageCache")
-    //         .findOne({ _id: memberId });
-        
-    //     if (!verificationMessageCache) return;
+    async setCacheVerificationMessage(memberId: Snowflake, messageId: Snowflake): Promise<void> {
+        await this.db
+            .collection<VerificationMessageCache>("verificationMessageCache")
+            .updateOne({ _id: memberId }, {
+                $set: {
+                    messageId: messageId
+                }
+            }, { upsert: true });
+    }
 
-    //     insert
-    // }
+    async lookupCacheVerificationMessage(memberId: Snowflake): Promise<VerificationMessageCache | null> {
+        const verificationMessageCache = await this.db
+            .collection<VerificationMessageCache>("verificationMessageCache")
+            .findOne({ _id: memberId });
+        
+        return verificationMessageCache;
+    }
+
+    async deleteCacheVerificationMessage(memberId: Snowflake): Promise<void> {
+        await this.db
+            .collection<VerificationMessageCache>("verificationMessageCache")
+            .deleteOne({ _id: memberId });
+    }
 
     // Moderation Log Methods
     async insertModLog(entry: ModLogEntry): Promise<void> {

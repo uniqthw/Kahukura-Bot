@@ -9,6 +9,9 @@
             "unverified": "your-server-unverified-channelID",
             "socials": "your-server-socials-news-channelID"
         },
+        "usersID": {
+            "checkuser": ["array-of-your-checkusers-discord-user-ids"]
+        },
         "webhook": {
             "socials": "your-server-socials-news-channel-webhook-url"
         }
@@ -21,6 +24,9 @@
             "user": "no-reply@email.org.nz", 
             "pass": "your-email-password" 
         }
+    },
+    "googleChatsWebhooks": {
+        "engagementSpace": "your-engagement-space-webhook"
     },
     "mongo": "your-mongodb-uri"
 }

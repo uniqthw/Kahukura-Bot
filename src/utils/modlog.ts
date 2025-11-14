@@ -8,7 +8,6 @@ export async function logModAction(entry: ModLogEntry): Promise<void> {
     try {
         const db = MongoDb.getInstance();
         await db.insertModLog(entry);
-        console.log(`Logged ${entry.action} action by ${entry.moderatorTag} on ${entry.targetTag}`);
     } catch (error) {
         console.error("Failed to log moderation action:", error);
     }

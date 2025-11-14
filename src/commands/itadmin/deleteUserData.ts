@@ -22,7 +22,8 @@ export default class DeleteUserData implements Command {
 
         if (interaction.user.id === "690866892448989225") {
             MongoDb.getInstance().deleteVerificationUserData(interaction.options.getUser("user", true).id);
-            return interaction.editReply({
+            
+            return await interaction.editReply({
                 content: "User data deleted."
             });
         }
