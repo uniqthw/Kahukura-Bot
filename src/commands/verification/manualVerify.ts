@@ -75,16 +75,12 @@ export default class LookupCommand implements Command {
         await this.removeVerificationFromOtherUsers(user.id, email, interaction.guild);
 
         // Try to fetch guild member and remove unverified role
-        const guild = await interaction.client.guilds.fetch(settings.discord.guildID);
-
-        if (!guild) return console.error("Guild not found.");
-
         try {
-            const member = await guild.members.fetch(user.id);
+            const member = await interaction.guild.members.fetch(user.id);
             
             if (member) {
                 const unverifiedRoleId = settings.discord.rolesID.unverified;
-                const unverifiedRole = guild.roles.cache.get(unverifiedRoleId);
+                const unverifiedRole = interaction.guild.roles.cache.get(unverifiedRoleId);
                 if (unverifiedRole && member.roles.cache.has(unverifiedRoleId)) {
                     await member.roles.remove(unverifiedRole, "Manually verified by admin command");
                 }
