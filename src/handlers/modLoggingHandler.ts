@@ -26,16 +26,21 @@ export default class ModLoggingHandler {
         const textDisplayComponents = [
             new TextDisplayBuilder().setContent(`# ${this.getLogEmoji(entry.action)} ${entry.action}`),
             new TextDisplayBuilder().setContent(`-# Executed at <t:${Math.floor(entry.timestamp / 1000)}:F>.`),
-            new TextDisplayBuilder().setContent(`**Punishment ID:** ${entry._id}`),
-            new TextDisplayBuilder().setContent(`**Punished:** ${userMention(entry.target.id)} [${entry.target.id}]`),
-            new TextDisplayBuilder().setContent(`**Executor:** ${userMention(entry.moderator.id)} [${entry.moderator.id}]`),
+            new TextDisplayBuilder().setContent(`**Punishment ID:** \`${entry._id}\``),
+            new TextDisplayBuilder().setContent(`**Punished:** ${userMention(entry.target.id)} [\`${entry.target.id}\`]`),
+            new TextDisplayBuilder().setContent(`**Executor:** ${userMention(entry.moderator.id)} [\`${entry.moderator.id}\`]`),
             new TextDisplayBuilder().setContent(`**Reason:** ${entry.reason}`),
         ];
 
         // Add duration and expiry if they exist
-        if (entry.duration) {
+        if (entry.duration?.length) {
             textDisplayComponents.push(
-                new TextDisplayBuilder().setContent(`**Duration:** ${humanizeDuration(entry.duration.length)}`),
+                new TextDisplayBuilder().setContent(`**Duration:** ${humanizeDuration(entry.duration.length)}`)
+            );
+        }
+
+        if (entry.duration?.expiry) {
+            textDisplayComponents.push(
                 new TextDisplayBuilder().setContent(`**Expires:** <t:${Math.floor(entry.duration.expiry / 1000)}:R>`)
             );
         }

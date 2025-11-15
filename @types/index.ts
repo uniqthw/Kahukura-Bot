@@ -51,8 +51,8 @@ export interface DBModLogEntry {
     reason: string;
     timestamp: number;
     duration?: {
-        length: number,
-        expiry: number
+        length?: number,
+        expiry?: number
     }
 }
 
@@ -64,8 +64,8 @@ export interface ModLogEntry {
     reason: string;
     timestamp: number;
     duration?: {
-        length: number,
-        expiry: number
+        length?: number,
+        expiry?: number
     }
 }
 
