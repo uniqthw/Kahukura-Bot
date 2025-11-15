@@ -15,6 +15,7 @@ import InteractionHandler from "./handlers/interactionHandler";
 import VerificationJoinHandler from "./handlers/verificationJoinHandler";
 import VerificationBanHandler from "./handlers/verificationBanHandler";
 import DynamicCommandHandler from "./handlers/dynamicCommandHandler";
+import MessageLoggingHandler from './handlers/messageLoggingHandler';
 
 class KahukuraApplication {
     private client: Client;
@@ -22,6 +23,7 @@ class KahukuraApplication {
     private verificationJoinHandler: VerificationJoinHandler;
     private verificationBanHandler: VerificationBanHandler;
     private dynamicCommandHandler: DynamicCommandHandler;
+    private messageLoggingHandler: MessageLoggingHandler;
     private discordRestClient: REST;
 
     constructor() {
@@ -31,13 +33,14 @@ class KahukuraApplication {
 
         this.client = new Client({
             allowedMentions: {},
-            intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildModeration, GatewayIntentBits.GuildMessages]
+            intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildModeration, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]
         });
 
         this.interactionHandler = new InteractionHandler();
         this.verificationJoinHandler = new VerificationJoinHandler();
         this.verificationBanHandler = new VerificationBanHandler();
         this.dynamicCommandHandler = new DynamicCommandHandler();
+        this.messageLoggingHandler = new MessageLoggingHandler();
         this.discordRestClient = new REST().setToken(settings.discord.token);
     }
 
@@ -58,7 +61,7 @@ class KahukuraApplication {
             });
     }
 
-    addClientEventHandlers() {
+    async addClientEventHandlers() {
         /* 
             Discord client event handlers.
         */
@@ -133,6 +136,14 @@ class KahukuraApplication {
 
             this.verificationBanHandler.handleBanRemove(ban.user);
         });
+
+        this.client.on(Events.MessageDelete, async (message) => {
+            await this.messageLoggingHandler.logMessageDelete(message, this.client);
+        });
+
+        // this.client.on(Events.MessageUpdate, (oldMessage, newMessage) => {
+        //     this.messageLoggingHandler.logMessageUpdate(oldMessage, newMessage, this.client);
+        // });
     }
 
     registerSlashCommands(clientID: Snowflake) {
