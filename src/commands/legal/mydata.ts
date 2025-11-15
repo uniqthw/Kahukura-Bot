@@ -1,48 +1,87 @@
+// Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
+
 import { Command, DBVerificationUser } from "../../../@types";
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, Interaction, SlashCommandBuilder } from "discord.js";
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    ChatInputCommandInteraction,
+    Interaction,
+    SlashCommandBuilder
+} from "discord.js";
 import { createTransport } from "nodemailer";
 import MongoDb from "../../utils/mongo";
 import settings from "../../utils/settings";
 
 export default class MyUserDataCommand implements Command {
     name = "mydata";
-    description = "Get a copy of your data stored in our verification database.";
-    slashCommand = (new SlashCommandBuilder()
+    description =
+        "Get a copy of your data stored in our verification database.";
+    slashCommand = new SlashCommandBuilder()
         .setName(this.name)
-        .setDescription(this.description)
-    );
+        .setDescription(this.description);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {
         await interaction.deferReply({ ephemeral: true });
 
-        const verificationUser = await MongoDb.getInstance().getVerificationUser(interaction.user.id);
+        const verificationUser =
+            await MongoDb.getInstance().getVerificationUser(
+                interaction.user.id
+            );
 
-        if (!verificationUser || (!verificationUser.email && !verificationUser.oldEmail)) return await interaction.editReply({
-            content: "You have no personal information in our user verification database."
-        });
+        if (
+            !verificationUser ||
+            (!verificationUser.email && !verificationUser.oldEmail)
+        )
+            return await interaction.editReply({
+                content:
+                    "You have no personal information in our user verification database."
+            });
 
-        if (!verificationUser.email && verificationUser.oldEmail) return await interaction.editReply({
-            content: "Unfortunately, you need to contact us at [itadmin@uniqthw.org.nz](mailto:itadmin@uniqthw.org.nz) to manually process your request."
-        });
+        if (!verificationUser.email && verificationUser.oldEmail)
+            return await interaction.editReply({
+                content:
+                    "Unfortunately, you need to contact us at [itadmin@uniqthw.org.nz](mailto:itadmin@uniqthw.org.nz) to manually process your request."
+            });
 
-        if (verificationUser.lastDataRequest && Date.now () < (verificationUser.lastDataRequest + 7 * 24 * 60 * 60 * 1000)) return await interaction.editReply({
-            content: `You have previously requested a copy of your data <t:${Math.floor(verificationUser.lastDataRequest / 1000)}:R>, you can only do this once every 7 days.`
-        });
+        if (
+            verificationUser.lastDataRequest &&
+            Date.now() <
+                verificationUser.lastDataRequest + 7 * 24 * 60 * 60 * 1000
+        )
+            return await interaction.editReply({
+                content: `You have previously requested a copy of your data <t:${Math.floor(verificationUser.lastDataRequest / 1000)}:R>, you can only do this once every 7 days.`
+            });
 
         // Builds the button components for the confirmation message
-        const confirmButton = new ButtonBuilder().setCustomId("confirm").setLabel("Confirm Request").setStyle(ButtonStyle.Success);
-        const cancelButton = new ButtonBuilder().setCustomId("cancel").setLabel("Cancel").setStyle(ButtonStyle.Secondary);
-        const componentsRow = new ActionRowBuilder<ButtonBuilder>().addComponents(confirmButton, cancelButton);
+        const confirmButton = new ButtonBuilder()
+            .setCustomId("confirm")
+            .setLabel("Confirm Request")
+            .setStyle(ButtonStyle.Success);
+        const cancelButton = new ButtonBuilder()
+            .setCustomId("cancel")
+            .setLabel("Cancel")
+            .setStyle(ButtonStyle.Secondary);
+        const componentsRow =
+            new ActionRowBuilder<ButtonBuilder>().addComponents(
+                confirmButton,
+                cancelButton
+            );
 
         const verifyDeletionRequestResponse = await interaction.editReply({
             content: `Are you sure you would like to make a request for your data? You can only do this every 7 days. You will receive a copy of your data in your email.`,
-            components: [ componentsRow ]
+            components: [componentsRow]
         });
 
-        const collectionFilter = (i: Interaction) => i.user.id === interaction.user.id;
+        const collectionFilter = (i: Interaction) =>
+            i.user.id === interaction.user.id;
 
         try {
-            const confirmation = await verifyDeletionRequestResponse.awaitMessageComponent({ filter: collectionFilter, time: 60_000 })
+            const confirmation =
+                await verifyDeletionRequestResponse.awaitMessageComponent({
+                    filter: collectionFilter,
+                    time: 60_000
+                });
 
             if (confirmation.customId === "confirm") {
                 await confirmation.deferUpdate();
@@ -50,17 +89,35 @@ export default class MyUserDataCommand implements Command {
                 try {
                     await this.processDataRequest(verificationUser);
                 } catch (error) {
-                    await confirmation.editReply({ content: "An error occurred whilst completing your data request. Please contact us at [itadmin@uniqthw.org.nz](mailto:itadmin@uniqthw.org.nz) to manually process your request.", components: []  });
-                    return console.error("An error occurred whilst processing a user's data request:", error);
+                    await confirmation.editReply({
+                        content:
+                            "An error occurred whilst completing your data request. Please contact us at [itadmin@uniqthw.org.nz](mailto:itadmin@uniqthw.org.nz) to manually process your request.",
+                        components: []
+                    });
+                    return console.error(
+                        "An error occurred whilst processing a user's data request:",
+                        error
+                    );
                 }
 
-                return await confirmation.editReply({ content: "Action confirmed. You should have received a copy of your data to the email you used to verify your account.", components: [] });
+                return await confirmation.editReply({
+                    content:
+                        "Action confirmed. You should have received a copy of your data to the email you used to verify your account.",
+                    components: []
+                });
             } else if (confirmation.customId === "cancel") {
-                return await confirmation.update({ content: "Action cancelled.", components: [] });
+                return await confirmation.update({
+                    content: "Action cancelled.",
+                    components: []
+                });
             }
         } catch (error) {
             console.error(error);
-            return await interaction.editReply({ content: "Confirmation was not received within 1 minute, cancelling request.", components: [] });
+            return await interaction.editReply({
+                content:
+                    "Confirmation was not received within 1 minute, cancelling request.",
+                components: []
+            });
         }
     }
 
@@ -86,10 +143,15 @@ export default class MyUserDataCommand implements Command {
             ]
         });
 
-        await MongoDb.getInstance().updateVerificationUserLatestDataRequest(verificationUser._id, Date.now());
+        await MongoDb.getInstance().updateVerificationUserLatestDataRequest(
+            verificationUser._id,
+            Date.now()
+        );
     }
 
-    private async generateDataRequestFile(data: DBVerificationUser): Promise<string> {
+    private async generateDataRequestFile(
+        data: DBVerificationUser
+    ): Promise<string> {
         // Sanitises DBVerificationUser object to remove certain properties that are not personal information and important not to include
         const sanitisedData = { ...data };
         delete sanitisedData.verificationData;
@@ -102,4 +164,4 @@ export default class MyUserDataCommand implements Command {
         // Returns JSON in base64 string
         return Buffer.from(lookupFileContent).toString("base64");
     }
-} 
+}

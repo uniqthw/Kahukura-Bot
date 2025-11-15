@@ -1,9 +1,15 @@
 // Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
-import { Client, ContainerBuilder, MessageFlags, TextDisplayBuilder, userMention } from "discord.js";
+import {
+    Client,
+    ContainerBuilder,
+    MessageFlags,
+    TextDisplayBuilder,
+    userMention
+} from "discord.js";
 import { ModLogEntry } from "../../@types";
 import MongoDb from "../utils/mongo";
-import { ModLogActions } from '../../@types/index';
+import { ModLogActions } from "../../@types/index";
 import prettyMilliseconds from "pretty-ms";
 import settings from "../utils/settings";
 
@@ -24,24 +30,38 @@ export default class ModLoggingHandler {
 
         // Build the base text display components
         const textDisplayComponents = [
-            new TextDisplayBuilder().setContent(`# ${this.getLogEmoji(entry.action)} ${entry.action}`),
-            new TextDisplayBuilder().setContent(`-# Executed at <t:${Math.floor(entry.timestamp / 1000)}:F>.`),
-            new TextDisplayBuilder().setContent(`**Punishment ID:** \`${entry._id}\``),
-            new TextDisplayBuilder().setContent(`**Punished:** ${userMention(entry.target.id)} [\`${entry.target.id}\`]`),
-            new TextDisplayBuilder().setContent(`**Executor:** ${userMention(entry.moderator.id)} [\`${entry.moderator.id}\`]`),
-            new TextDisplayBuilder().setContent(`**Reason:** ${entry.reason}`),
+            new TextDisplayBuilder().setContent(
+                `# ${this.getLogEmoji(entry.action)} ${entry.action}`
+            ),
+            new TextDisplayBuilder().setContent(
+                `-# Executed at <t:${Math.floor(entry.timestamp / 1000)}:F>.`
+            ),
+            new TextDisplayBuilder().setContent(
+                `**Punishment ID:** \`${entry._id}\``
+            ),
+            new TextDisplayBuilder().setContent(
+                `**Punished:** ${userMention(entry.target.id)} [\`${entry.target.id}\`]`
+            ),
+            new TextDisplayBuilder().setContent(
+                `**Executor:** ${userMention(entry.moderator.id)} [\`${entry.moderator.id}\`]`
+            ),
+            new TextDisplayBuilder().setContent(`**Reason:** ${entry.reason}`)
         ];
 
         // Add duration and expiry if they exist
         if (entry.duration?.length) {
             textDisplayComponents.push(
-                new TextDisplayBuilder().setContent(`**Duration:** ${prettyMilliseconds(entry.duration.length, { verbose: true })}`)
+                new TextDisplayBuilder().setContent(
+                    `**Duration:** ${prettyMilliseconds(entry.duration.length, { verbose: true })}`
+                )
             );
         }
 
         if (entry.duration?.expiry) {
             textDisplayComponents.push(
-                new TextDisplayBuilder().setContent(`**Expires:** <t:${Math.floor(entry.duration.expiry / 1000)}:R>`)
+                new TextDisplayBuilder().setContent(
+                    `**Expires:** <t:${Math.floor(entry.duration.expiry / 1000)}:R>`
+                )
             );
         }
 
@@ -49,17 +69,29 @@ export default class ModLoggingHandler {
             new ContainerBuilder()
                 .setAccentColor(this.getLogAccentColour(entry.action))
                 .addTextDisplayComponents(...textDisplayComponents)
-        ]
+        ];
 
-        const modLogChannel = await client.channels.fetch(settings.discord.channelsID.modPunishmentLog);
+        const modLogChannel = await client.channels.fetch(
+            settings.discord.channelsID.modPunishmentLog
+        );
 
-        if (!modLogChannel || !modLogChannel.isTextBased() || !modLogChannel.isSendable()) throw new Error("Failed to log punishment to mod log channel. Likely misconfiguration, ensure settings.json is appropriately filled out and the bot has access to send messages in the channel.")
-        
+        if (
+            !modLogChannel ||
+            !modLogChannel.isTextBased() ||
+            !modLogChannel.isSendable()
+        )
+            throw new Error(
+                "Failed to log punishment to mod log channel. Likely misconfiguration, ensure settings.json is appropriately filled out and the bot has access to send messages in the channel."
+            );
+
         await modLogChannel.sendTyping();
         try {
-            await modLogChannel.send({ components: components, flags: MessageFlags.IsComponentsV2 });
+            await modLogChannel.send({
+                components: components,
+                flags: MessageFlags.IsComponentsV2
+            });
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
     }
 

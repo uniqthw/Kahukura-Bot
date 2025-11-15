@@ -1,13 +1,20 @@
 // Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, WebhookClient, PermissionFlagsBits, InteractionContextType, PermissionsBitField } from "discord.js";
+import {
+    SlashCommandBuilder,
+    ChatInputCommandInteraction,
+    WebhookClient,
+    PermissionFlagsBits,
+    InteractionContextType
+} from "discord.js";
 import { Command } from "../../../@types";
 import settings from "../../utils/settings";
 
 export default class SocialCommand implements Command {
     name = "socialpost";
-    description = "Post the Association's social media posts to the Discord server.";
-    slashCommand = (new SlashCommandBuilder()
+    description =
+        "Post the Association's social media posts to the Discord server.";
+    slashCommand = new SlashCommandBuilder()
         .setName(this.name)
         .setDescription(this.description)
         .setContexts(InteractionContextType.Guild)
@@ -19,7 +26,7 @@ export default class SocialCommand implements Command {
                     "The link to the social media post, this will send the raw link to the webhook."
                 )
                 .setRequired(true)
-        ) as SlashCommandBuilder);
+        ) as SlashCommandBuilder;
 
     /*
         Execute is called when the interaction is used on Discord.
@@ -28,24 +35,31 @@ export default class SocialCommand implements Command {
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {
         const link = interaction.options.getString("link");
 
-        if (!link) return interaction.reply({
-            ephemeral: true,
-            content: "Please provide a link to the social media post."
-        });
+        if (!link)
+            return interaction.reply({
+                ephemeral: true,
+                content: "Please provide a link to the social media post."
+            });
 
-        const webhook = new WebhookClient({ url: settings.discord.webhook.socials });
+        const webhook = new WebhookClient({
+            url: settings.discord.webhook.socials
+        });
 
         try {
             await webhook.send({
                 content: link
             });
         } catch (error) {
-            console.error("Failed to send social media post to webhook: ", error);
+            console.error(
+                "Failed to send social media post to webhook: ",
+                error
+            );
             webhook.destroy();
 
             return interaction.reply({
                 ephemeral: true,
-                content: "Failed to send social media post to webhook. Please try again later."
+                content:
+                    "Failed to send social media post to webhook. Please try again later."
             });
         }
 
@@ -53,7 +67,8 @@ export default class SocialCommand implements Command {
 
         return interaction.reply({
             ephemeral: true,
-            content: "The social media post URL has been published on the Discord server successfully."
+            content:
+                "The social media post URL has been published on the Discord server successfully."
         });
     }
 }

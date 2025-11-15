@@ -1,16 +1,23 @@
 // Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
 import { Command, DBVerificationUser } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionsBitField, roleMention, InteractionContextType, User, Snowflake, FileUploadAssertions, userMention } from "discord.js";
+import {
+    ChatInputCommandInteraction,
+    SlashCommandBuilder,
+    InteractionContextType,
+    User,
+    userMention
+} from "discord.js";
 import MongoDb from "../../utils/mongo";
-import { isCheckuser } from '../../utils/roleCheck';
+import { isCheckuser } from "../../utils/roleCheck";
 import { createTransport } from "nodemailer";
 import settings from "../../utils/settings";
 
 export default class LookupCommand implements Command {
     name = "lookup";
-    description = "Lookup a user's email, Discord ID, and key statuses (ban and verification status).";
-    slashCommand = (new SlashCommandBuilder()
+    description =
+        "Lookup a user's email, Discord ID, and key statuses (ban and verification status).";
+    slashCommand = new SlashCommandBuilder()
         .setName(this.name)
         .setDescription(this.description)
         .setContexts(InteractionContextType.Guild)
@@ -19,7 +26,7 @@ export default class LookupCommand implements Command {
                 .setName("user")
                 .setDescription("The user to lookup.")
                 .setRequired(true)
-        ) as SlashCommandBuilder);
+        ) as SlashCommandBuilder;
 
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {
         await interaction.deferReply({ ephemeral: true });
@@ -34,7 +41,8 @@ export default class LookupCommand implements Command {
         const user = interaction.options.getUser("user", true);
 
         // Fetch the user's verification data from the database
-        const verificationUser = await MongoDb.getInstance().getVerificationUser(user.id);
+        const verificationUser =
+            await MongoDb.getInstance().getVerificationUser(user.id);
         if (!verificationUser) {
             return await interaction.editReply({
                 content: "No data found for the specified user."
@@ -42,14 +50,24 @@ export default class LookupCommand implements Command {
         }
 
         try {
-            const userLookupFile = await this.generateUserLookupFile(verificationUser, interaction.user);
-            await this.sendLookupEmail(interaction.user, verificationUser, userLookupFile);
-
+            const userLookupFile = await this.generateUserLookupFile(
+                verificationUser,
+                interaction.user
+            );
+            await this.sendLookupEmail(
+                interaction.user,
+                verificationUser,
+                userLookupFile
+            );
         } catch (error) {
-            console.error("An error occurred whilst executing the user lookup command:", error);
-            
+            console.error(
+                "An error occurred whilst executing the user lookup command:",
+                error
+            );
+
             return await interaction.editReply({
-                content: "An error occurred whilst executing the user lookup command."
+                content:
+                    "An error occurred whilst executing the user lookup command."
             });
         }
 
@@ -58,7 +76,11 @@ export default class LookupCommand implements Command {
         });
     }
 
-    private async sendLookupEmail(checkuser: User, verificationUser: DBVerificationUser, fileUri: string) {
+    private async sendLookupEmail(
+        checkuser: User,
+        verificationUser: DBVerificationUser,
+        fileUri: string
+    ) {
         // Create a transporter object using the default SMTP transport
         let transporter = createTransport(settings.email);
 
@@ -79,7 +101,10 @@ export default class LookupCommand implements Command {
         });
     }
 
-    private async generateUserLookupFile(verificationUser: DBVerificationUser, checkuser: User): Promise<string> {
+    private async generateUserLookupFile(
+        verificationUser: DBVerificationUser,
+        checkuser: User
+    ): Promise<string> {
         const lookupFileContent = `
         === USER LOOKUP FILE ===
         
@@ -95,9 +120,8 @@ export default class LookupCommand implements Command {
 
         --- CHECKUSER ---
         Discord ID: ${checkuser.id}
-        Discord Username: @${checkuser.username}`
+        Discord Username: @${checkuser.username}`;
 
-        
         // Returns JSON in base64 string
         return Buffer.from(lookupFileContent.trimStart()).toString("base64");
     }
