@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits } = require("discord.js");
+import { Client, GatewayIntentBits } from "discord.js";
 import settings from "../src/utils/settings";
 
 const client = new Client({
