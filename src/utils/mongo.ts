@@ -1,7 +1,7 @@
 // Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
 import { Db, InsertOneResult, MongoClient } from "mongodb";
-import settings from "../utils/settings";
+import settings from "./settings";
 import { Snowflake } from "discord.js";
 import { DBModLogEntry, DBVerificationUser, ModLogEntry, VerificationMessageCache } from "../../@types";
 
