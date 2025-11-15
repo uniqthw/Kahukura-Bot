@@ -3,7 +3,7 @@
 import { Command } from "../../../@types";
 import { ChatInputCommandInteraction, Guild, SlashCommandBuilder, Snowflake } from "discord.js";
 import MongoDb from "../../utils/mongo";
-import settings from "../../../settings.json";
+import settings from "../../utils/settings";
 import DynamicCommandHandler from "../../handlers/dynamicCommandHandler";
 import SharedVerificationHandler from "../../handlers/sharedVerificationHandler";
 

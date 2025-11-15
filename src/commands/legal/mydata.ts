@@ -2,7 +2,7 @@ import { Command, DBVerificationUser } from "../../../@types";
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, Interaction, SlashCommandBuilder } from "discord.js";
 import { createTransport } from "nodemailer";
 import MongoDb from "../../utils/mongo";
-import settings from "../../../settings.json";
+import settings from "../../utils/settings";
 
 export default class MyUserDataCommand implements Command {
     name = "mydata";

@@ -3,7 +3,7 @@
 import { Command } from "../../../@types";
 import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionsBitField, InteractionContextType, User, userMention } from "discord.js";
 import MongoDb from "../../utils/mongo";
-import settings from "../../../settings.json";
+import settings from "../../utils/settings";
 import DirectMessageHandler from "../../handlers/directMessageHandler";
 import SharedVerificationHandler from "../../handlers/sharedVerificationHandler";
 

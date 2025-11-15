@@ -1,7 +1,7 @@
 // Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
 import { APIInteractionGuildMember, GuildMember, User } from "discord.js";
-import settings from "../../settings.json";
+import settings from "../utils/settings";
 
 /**
  * Check if a guild member has the moderator role
