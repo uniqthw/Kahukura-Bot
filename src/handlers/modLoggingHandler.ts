@@ -5,7 +5,7 @@ import { ModLogEntry } from "../../@types";
 import MongoDb from "../utils/mongo";
 import { ModLogActions } from '../../@types/index';
 import prettyMilliseconds from "pretty-ms";
-import settings from "../../settings.json";
+import settings from "../utils/settings";
 
 enum ModLogColours {
     BAN = 0xdf7d7d,

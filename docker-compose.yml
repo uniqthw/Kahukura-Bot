@@ -1,0 +1,41 @@
+services:
+  # MongoDB Service
+  mongodb:
+    image: mongo:7
+    container_name: kahukura-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
+    volumes:
+      - /opt/kahukurabot/mongodb/data:/data/db
+      - /opt/kahukurabot/mongodb/config:/data/configdb
+    ports:
+      - "127.0.0.1:27017:27017"
+    networks:
+      - kahukura-network
+    healthcheck:
+      test: ["CMD", "sh", "-c", "mongosh --username $$MONGO_ROOT_USERNAME --password $$MONGO_ROOT_PASSWORD --authenticationDatabase admin --eval \"db.adminCommand('ping')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Kahukura Bot Service
+  kahukura-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kahukura-bot
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    volumes:
+      - /opt/kahukurabot/settings.json:/app/dist/settings.json:ro
+    networks:
+      - kahukura-network
+
+networks:
+  kahukura-network:
+    driver: bridge

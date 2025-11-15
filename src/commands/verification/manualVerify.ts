@@ -1,11 +1,12 @@
 // Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
 import { Command } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionsBitField, InteractionContextType, User, userMention } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionsBitField, InteractionContextType, User, userMention, PermissionFlagsBits } from "discord.js";
 import MongoDb from "../../utils/mongo";
-import settings from "../../../settings.json";
+import settings from "../../utils/settings";
 import DirectMessageHandler from "../../handlers/directMessageHandler";
 import SharedVerificationHandler from "../../handlers/sharedVerificationHandler";
+import { isCheckuser } from "../../utils/roleCheck";
 
 const sharedVerificationHandler = new SharedVerificationHandler();
 const directMessageHandler = new  DirectMessageHandler();
@@ -43,13 +44,13 @@ export default class LookupCommand implements Command {
 
         if (!interaction.guild) return console.error("Guild not found in interaction.");
         
-        // Check if the user has admin permissions
-        if (!interaction.memberPermissions?.has(PermissionsBitField.Flags.Administrator)) {
+        // Check if the user has checkuser permissions
+        if (!isCheckuser(interaction.user)) {
             return await interaction.editReply({
                 content: "You do not have permission to use this command."
             });
         }
-
+        
         const user = interaction.options.getUser("user", true);
         const email = interaction.options.getString("email", true).toLowerCase();
         const reason = interaction.options.getString("reason", true);

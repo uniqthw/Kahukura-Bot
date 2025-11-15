@@ -1,8 +1,8 @@
 // Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
-import { SlashCommandBuilder, ChatInputCommandInteraction, WebhookClient, PermissionFlagsBits } from "discord.js";
+import { SlashCommandBuilder, ChatInputCommandInteraction, WebhookClient, PermissionFlagsBits, InteractionContextType, PermissionsBitField } from "discord.js";
 import { Command } from "../../../@types";
-import settings from "../../../settings.json";
+import settings from "../../utils/settings";
 
 export default class SocialCommand implements Command {
     name = "socialpost";
@@ -10,6 +10,7 @@ export default class SocialCommand implements Command {
     slashCommand = (new SlashCommandBuilder()
         .setName(this.name)
         .setDescription(this.description)
+        .setContexts(InteractionContextType.Guild)
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageEvents)
         .addStringOption((option) =>
             option

@@ -1,5 +1,5 @@
 import { Command, ModLogActions } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, PermissionFlagsBits, userMention } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, PermissionFlagsBits, userMention, InteractionContextType } from "discord.js";
 
 import ModLoggingHandler from '../../handlers/modLoggingHandler';
 const modLoggingHandler = new ModLoggingHandler();
@@ -10,6 +10,7 @@ export default class UnmuteCommand implements Command {
     slashCommand = (new SlashCommandBuilder()
         .setName(this.name)
         .setDescription(this.description)
+        .setContexts(InteractionContextType.Guild)
         .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
         .addUserOption(option =>
             option.setName("user").setDescription("Specify the user you are un-timing out.").setRequired(true)

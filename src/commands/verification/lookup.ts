@@ -5,7 +5,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionsBitField, 
 import MongoDb from "../../utils/mongo";
 import { isCheckuser } from '../../utils/roleCheck';
 import { createTransport } from "nodemailer";
-import settings from "../../../settings.json";
+import settings from "../../utils/settings";
 
 export default class LookupCommand implements Command {
     name = "lookup";

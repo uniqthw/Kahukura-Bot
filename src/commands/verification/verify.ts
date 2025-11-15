@@ -4,7 +4,7 @@ import { Command } from "../../../@types";
 import { ChatInputCommandInteraction, Client, GuildMember, SlashCommandBuilder, User } from "discord.js";
 import MongoDb from "../../utils/mongo";
 import { createTransport } from "nodemailer";
-import settings from "../../../settings.json";
+import settings from "../../utils/settings";
 import DirectMessageHandler from "../../handlers/directMessageHandler";
 import DynamicCommandHandler from "../../handlers/dynamicCommandHandler";
 

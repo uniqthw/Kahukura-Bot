@@ -2,7 +2,7 @@ import { Attachment, messageLink } from 'discord.js';
 // Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
 import { AttachmentBuilder, Client, ContainerBuilder, FileBuilder, Message, MessageFlags, OmitPartialGroupDMChannel, PartialMessage, TextDisplayBuilder, User, userMention } from "discord.js";
-import settings from "../../settings.json";
+import settings from "../utils/settings";
 
 enum MessageLogColours {
     DELETE = 0xdf7d7d,

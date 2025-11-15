@@ -1,0 +1,62 @@
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build output
+dist/
+build/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# GitHub
+.github/
+
+# Documentation
+*.md
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+SECURITY.md
+LICENSE
+
+# Docker files
+docker-compose.yml
+.dockerignore
+
+# Environment files
+.env
+
+# Settings (real settings.json excluded, but allow settings.example.json for build)
+settings.json
+
+# Test files
+test/
+tests/
+**/*.test.ts
+**/*.spec.ts
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/

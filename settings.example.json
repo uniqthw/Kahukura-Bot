@@ -32,5 +32,5 @@
     "googleChatsWebhooks": {
         "engagementSpace": "your-engagement-space-webhook"
     },
-    "mongo": "your-mongodb-uri"
+    "mongo": "mongodb://admin:changeme@mongodb:27017/kahukura?authSource=admin//that-is-an-example-of-your-mongodb-uri-please-change"
 }

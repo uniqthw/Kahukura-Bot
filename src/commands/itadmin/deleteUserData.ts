@@ -1,6 +1,7 @@
 import { Command } from "../../../@types";
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, Interaction, SlashCommandBuilder, userMention } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, Interaction, InteractionContextType, SlashCommandBuilder, userMention } from "discord.js";
 import MongoDb from "../../utils/mongo";
+import { isITAdmin } from "../../utils/roleCheck";
 
 export default class DeleteUserDataCommand implements Command {
     name = "deletedata";
@@ -8,6 +9,7 @@ export default class DeleteUserDataCommand implements Command {
     slashCommand = (new SlashCommandBuilder()
         .setName(this.name)
         .setDescription(this.description)
+        .setContexts(InteractionContextType.Guild)
         .addUserOption((option) =>
             option
                 .setName("user")
@@ -18,9 +20,16 @@ export default class DeleteUserDataCommand implements Command {
         ) as SlashCommandBuilder);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {
-        const user = interaction.options.getUser("user", true);
-
         await interaction.deferReply({ ephemeral: true });
+
+        // Check if the user has admin permissions
+        if (!isITAdmin(interaction.user)) {
+            return await interaction.editReply({
+                content: "You do not have permission to use this command."
+            });
+        }
+
+        const user = interaction.options.getUser("user", true);
 
         const verificationUser = await MongoDb.getInstance().getVerificationUser(user.id);
 
