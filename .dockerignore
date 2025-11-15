@@ -37,7 +37,10 @@ LICENSE
 docker-compose.yml
 .dockerignore
 
-# Settings (will be mounted as volume)
+# Environment files
+.env
+
+# Settings (real settings.json excluded, but allow settings.example.json for build)
 settings.json
 
 # Test files

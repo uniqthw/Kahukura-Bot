@@ -18,6 +18,10 @@ RUN pnpm install --frozen-lockfile
 # Copy source files and TypeScript config
 COPY . .
 
+# Copy settings.example.json as settings.json for build (TypeScript needs it for compilation)
+# The real settings.json will be mounted at runtime
+RUN cp settings.example.json settings.json
+
 # Build TypeScript to JavaScript
 RUN pnpm run build
 
