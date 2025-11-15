@@ -34,7 +34,7 @@ export default class MessageLoggingHandler {
         }
     
         // Iterate over messages to create a file
-        let attachment;
+        let attachment: AttachmentBuilder | undefined;
         let fileNote: string;
         const attachmentName = `purge-${targetUser ? targetUser.id : "channel"}-${Date.now()}.txt`;
     

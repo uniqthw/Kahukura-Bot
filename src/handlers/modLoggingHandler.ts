@@ -53,7 +53,7 @@ export default class ModLoggingHandler {
 
         const modLogChannel = await client.channels.fetch(settings.discord.channelsID.modPunishmentLog);
 
-        if (!modLogChannel || !modLogChannel.isTextBased() || !modLogChannel.isSendable()) throw new Error("Failed to log punishment to mod log channel. Likely misconfiguration, ensure settings.json is appropiately filled out and the bot has access to send messages in the channel.")
+        if (!modLogChannel || !modLogChannel.isTextBased() || !modLogChannel.isSendable()) throw new Error("Failed to log punishment to mod log channel. Likely misconfiguration, ensure settings.json is appropriately filled out and the bot has access to send messages in the channel.")
         
         await modLogChannel.sendTyping();
         try {

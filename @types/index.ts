@@ -1,4 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, Snowflake, User } from "discord.js";
+import { ObjectId } from "mongodb";
 
 // Defines an interface for the types for command classes
 export interface Command {
@@ -44,7 +45,7 @@ export interface VerificationUserCheck {
 }
 
 export interface DBModLogEntry {
-    _id?: string;
+    _id?: string | ObjectId;
     action: ModLogActions;
     targetId: string;
     moderatorId: string;
@@ -57,7 +58,7 @@ export interface DBModLogEntry {
 }
 
 export interface ModLogEntry {
-    _id?: string;
+    _id?: string | ObjectId;
     action: ModLogActions;
     target: User;
     moderator: User;
@@ -77,10 +78,3 @@ export enum ModLogActions {
     UNTIMEOUT = "Untimeout",
     WARN = "Warn"
 }
-
-// action: "ban",
-// targetId: user.id,
-// moderatorId: interaction.user.id,
-// reason,
-// timestamp: Date.now(),
-// guildId: interaction.guild?.id || ""

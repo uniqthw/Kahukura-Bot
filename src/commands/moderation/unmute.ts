@@ -2,7 +2,7 @@ import { Command, ModLogActions } from "../../../@types";
 import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, PermissionFlagsBits, userMention } from "discord.js";
 
 import ModLoggingHandler from '../../handlers/modLoggingHandler';
-const modLoggingHandler = new ModLoggingHandler;
+const modLoggingHandler = new ModLoggingHandler();
 
 export default class UnmuteCommand implements Command {
     name = "unmute";
