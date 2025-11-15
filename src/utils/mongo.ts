@@ -136,14 +136,4 @@ export default class MongoDb {
             timestamp: entry.timestamp
         });
     }
-
-    async getModLogs(targetId?: string, limit: number = 10): Promise<ModLogEntry[]> {
-        const query = targetId ? { targetId } : {};
-        const logs = await this.db.collection<ModLogEntry>("modlogs")
-            .find(query)
-            .sort({ timestamp: -1 })
-            .limit(limit)
-            .toArray();
-        return logs;
-    }
 }
