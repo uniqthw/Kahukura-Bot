@@ -32,7 +32,7 @@ export default class UnmuteCommand implements Command {
             const member = await interaction.guild.members.fetch(user.id);
             if (!member) return await interaction.editReply("The target user is not in the server.");
 
-            member.timeout(0, reason)
+            member.timeout(null, reason)
 
             // Log moderation action
             await modLoggingHandler.logModAction({

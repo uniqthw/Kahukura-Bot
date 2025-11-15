@@ -1,6 +1,6 @@
 // Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
-import { Client, ContainerBuilder, TextDisplayBuilder, userMention } from "discord.js";
+import { Client, ContainerBuilder, MessageFlags, TextDisplayBuilder, userMention } from "discord.js";
 import { ModLogEntry } from "../../@types";
 import MongoDb from "../utils/mongo";
 import { ModLogActions } from '../../@types/index';
@@ -24,19 +24,19 @@ export default class ModLoggingHandler {
 
         // Build the base text display components
         const textDisplayComponents = [
-            new TextDisplayBuilder().setContent(`# ${entry.action}`),
+            new TextDisplayBuilder().setContent(`# ${this.getLogEmoji(entry.action)} ${entry.action}`),
             new TextDisplayBuilder().setContent(`-# Executed at <t:${Math.floor(entry.timestamp / 1000)}:F>.`),
-            new TextDisplayBuilder().setContent(`* **Punishment ID:** ${entry._id}`),
-            new TextDisplayBuilder().setContent(`* **Punished:** ${userMention(entry.target.id)} [${entry.target.id}]`),
-            new TextDisplayBuilder().setContent(`* **Executor:** ${userMention(entry.moderator.id)} [${entry.moderator.id}]`),
-            new TextDisplayBuilder().setContent(`* **Reason:** ${entry.reason}`),
+            new TextDisplayBuilder().setContent(`**Punishment ID:** ${entry._id}`),
+            new TextDisplayBuilder().setContent(`**Punished:** ${userMention(entry.target.id)} [${entry.target.id}]`),
+            new TextDisplayBuilder().setContent(`**Executor:** ${userMention(entry.moderator.id)} [${entry.moderator.id}]`),
+            new TextDisplayBuilder().setContent(`**Reason:** ${entry.reason}`),
         ];
 
         // Add duration and expiry if they exist
         if (entry.duration) {
             textDisplayComponents.push(
-                new TextDisplayBuilder().setContent(`* **Duration:** ${humanizeDuration(entry.duration.length)}`),
-                new TextDisplayBuilder().setContent(`* **Expires:** ${entry.duration.expiry}`)
+                new TextDisplayBuilder().setContent(`**Duration:** ${humanizeDuration(entry.duration.length)}`),
+                new TextDisplayBuilder().setContent(`**Expires:** <t:${Math.floor(entry.duration.expiry / 1000)}:R>`)
             );
         }
 
@@ -52,36 +52,63 @@ export default class ModLoggingHandler {
         
         await modLogChannel.sendTyping();
         try {
-            await modLogChannel.send({ components: components });
+            await modLogChannel.send({ components: components, flags: MessageFlags.IsComponentsV2 });
         } catch (error) {
             console.error(error)
         }
     }
 
     private getLogAccentColour(logType: ModLogActions) {
+        let colour: number;
+
         switch (logType) {
             case ModLogActions.BAN:
-                return ModLogColours.BAN;
+                colour = ModLogColours.BAN;
+                break;
             case ModLogActions.KICK:
-                return ModLogColours.BAN; 
+                colour = ModLogColours.KICK;
+                break;
             case ModLogActions.TIMEOUT:
-                return ModLogColours.BAN;
+                colour = ModLogColours.TIMEOUT;
+                break;
             case ModLogActions.UNBAN:
-                return ModLogColours.BAN; 
+                colour = ModLogColours.UNBAN;
+                break;
             case ModLogActions.UNTIMEOUT:
-                return ModLogColours.BAN;
+                colour = ModLogColours.UNTIMEOUT;
+                break;
             default:
-                return ModLogColours.GENERIC;
+                colour = ModLogColours.GENERIC;
+                break;
         }
+
+        return colour;
     }
 
-    // async function getModLogs(targetId?: string, limit: number = 10): Promise<ModLogEntry[]> {
-    //     try {
-    //         const db = MongoDb.getInstance();
-    //         return await db.getModLogs(targetId, limit);
-    //     } catch (error) {
-    //         console.error("Failed to retrieve moderation logs:", error);
-    //         return [];
-    //     }
-    // }
+    private getLogEmoji(logType: ModLogActions) {
+        let emoji: string;
+
+        switch (logType) {
+            case ModLogActions.BAN:
+                emoji = "<:ban:1439025860308107264>";
+                break;
+            case ModLogActions.KICK:
+                emoji = "<:kick:1439025863952830557>";
+                break;
+            case ModLogActions.TIMEOUT:
+                emoji = "<:timeout:1439025866343452793>";
+                break;
+            case ModLogActions.UNBAN:
+                emoji = "<:unban:1439025868885459055>";
+                break;
+            case ModLogActions.UNTIMEOUT:
+                emoji = "<:untimeout:1439025870659391538>";
+                break;
+            default:
+                emoji = "<:generic:1439025862375768275>";
+                break;
+        }
+
+        return emoji;
+    }
 }

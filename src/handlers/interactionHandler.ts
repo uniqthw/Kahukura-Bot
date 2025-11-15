@@ -26,6 +26,7 @@ import UnbanCommand from "../commands/moderation/unban";
 import KickCommand from "../commands/moderation/kick";
 import MuteCommand from "../commands/moderation/mute";
 import UnmuteCommand from "../commands/moderation/unmute";
+import PurgeCommand from "../commands/moderation/purge";
 
 export default class InteractionHandler {
     private commands: Command[];
@@ -48,7 +49,7 @@ export default class InteractionHandler {
             new MuteCommand(),
             new UnmuteCommand(),
             // new WarnCommand(),
-            // new PurgeCommand(),
+            new PurgeCommand(),
             // new LockCommand(),
             // new UnlockCommand(),
             // new SlowmodeCommand(),

@@ -9,7 +9,8 @@
         "channelsID": {
             "unverified": "your-server-unverified-channelID",
             "socials": "your-server-socials-news-channelID",
-            "modPunishmentLog": ""
+            "modPunishmentLog": "your-server-log-punishment-channelID",
+            "messageLog": "your-server-log-message-channelID"
         },
         "usersID": {
             "checkuser": ["array-of-your-checkusers-discord-user-ids"],
