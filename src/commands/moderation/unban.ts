@@ -1,7 +1,13 @@
 // Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
 import { Command, ModLogActions } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits, userMention, InteractionContextType } from "discord.js";
+import {
+    ChatInputCommandInteraction,
+    SlashCommandBuilder,
+    PermissionFlagsBits,
+    userMention,
+    InteractionContextType
+} from "discord.js";
 
 import ModLoggingHandler from "../../handlers/modLoggingHandler";
 
@@ -10,45 +16,59 @@ const modLoggingHandler = new ModLoggingHandler();
 export default class UnbanCommand implements Command {
     name = "unban";
     description = "Unban a user from the server.";
-    slashCommand = (new SlashCommandBuilder()
+    slashCommand = new SlashCommandBuilder()
         .setName(this.name)
         .setDescription(this.description)
         .setContexts(InteractionContextType.Guild)
         .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
-        .addUserOption(option =>
-            option.setName("user").setDescription("Specify the user you are unbanning.").setRequired(true)
+        .addUserOption((option) =>
+            option
+                .setName("user")
+                .setDescription("Specify the user you are unbanning.")
+                .setRequired(true)
         )
-        .addStringOption(option =>
-            option.setName("reason").setDescription("Please provide a justification for unbanning this user.").setRequired(true)
-        ) as SlashCommandBuilder);
+        .addStringOption((option) =>
+            option
+                .setName("reason")
+                .setDescription(
+                    "Please provide a justification for unbanning this user."
+                )
+                .setRequired(true)
+        ) as SlashCommandBuilder;
 
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {
         await interaction.deferReply({ ephemeral: true });
-        
-        if (!interaction.guild) return await interaction.editReply("This command needs to be executed within the server.");
-        
+
+        if (!interaction.guild)
+            return await interaction.editReply(
+                "This command needs to be executed within the server."
+            );
+
         const user = interaction.options.getUser("user", true);
         const reason = interaction.options.getString("reason", true);
 
         try {
             // Unban user
             await interaction.guild.members.unban(user.id, reason);
-            
+
             // Log moderation action
-            await modLoggingHandler.logModAction({
-                action: ModLogActions.UNBAN,
-                target: user,
-                moderator: interaction.user,
-                reason,
-                timestamp: Date.now()
-            }, interaction.client);
-            
-            return await interaction.editReply({ 
-                content: `${userMention(user.id)} has been unbanned.` 
+            await modLoggingHandler.logModAction(
+                {
+                    action: ModLogActions.UNBAN,
+                    target: user,
+                    moderator: interaction.user,
+                    reason,
+                    timestamp: Date.now()
+                },
+                interaction.client
+            );
+
+            return await interaction.editReply({
+                content: `${userMention(user.id)} has been unbanned.`
             });
         } catch (err) {
             await interaction.editReply("Failed to unban user or log.");
-            return console.error("Failed to unban user or log:", err)
+            return console.error("Failed to unban user or log:", err);
         }
     }
 }

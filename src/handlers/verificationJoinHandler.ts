@@ -7,7 +7,6 @@ import { VerificationUserCheck } from "../../@types";
 import DirectMessageHandler from "./directMessageHandler";
 
 export default class VerificationJoinHandler {
-
     private directMessageHandler: DirectMessageHandler;
 
     constructor() {
@@ -46,10 +45,15 @@ export default class VerificationJoinHandler {
 
         // Check if a user is marked as banned in the database, and bans if they are
         if (verificationCheck.banned) {
-            this.directMessageHandler.handleMessage(member, {
-                content: `E hoa, your account is flagged as banned in UniQ Te Herenga Waka's verification database. Please contact [discord@uniqthw.org.nz](mailto:discord@uniqthw.org.nz) to appeal.`,
-                allowedMentions: { users: [member.id] }
-            }, false, false);
+            this.directMessageHandler.handleMessage(
+                member,
+                {
+                    content: `E hoa, your account is flagged as banned in UniQ Te Herenga Waka's verification database. Please contact [discord@uniqthw.org.nz](mailto:discord@uniqthw.org.nz) to appeal.`,
+                    allowedMentions: { users: [member.id] }
+                },
+                false,
+                false
+            );
 
             await member.ban({
                 reason: "User's account is flagged as banned in the verification database."
@@ -67,9 +71,14 @@ export default class VerificationJoinHandler {
             return;
         }
 
-        await this.directMessageHandler.handleMessage(member, {
-            content: `Kia ora ${userMention(member.user.id)}, before you can interact within UniQ Te Herenga Waka, such as sending messages, you need to verify your account first.\n\nTo get verified e hoa, please run the ${verifyCommand} command!\n\nIf you are not a student or staff member at Te Herenga Waka—Victoria University of Wellington, you will need to request manual verification by emailing us at [discord@uniqthw.org.nz](mailto:discord@uniqthw.org.nz).`,
-            allowedMentions: { users: [member.id] }
-        }, true, true);
+        await this.directMessageHandler.handleMessage(
+            member,
+            {
+                content: `Kia ora ${userMention(member.user.id)}, before you can interact within UniQ Te Herenga Waka, such as sending messages, you need to verify your account first.\n\nTo get verified e hoa, please run the ${verifyCommand} command!\n\nIf you are not a student or staff member at Te Herenga Waka—Victoria University of Wellington, you will need to request manual verification by emailing us at [discord@uniqthw.org.nz](mailto:discord@uniqthw.org.nz).`,
+                allowedMentions: { users: [member.id] }
+            },
+            true,
+            true
+        );
     }
 }

@@ -37,7 +37,7 @@ export default class InteractionHandler {
             new DeleteUserData(),
 
             // Legal Commands
-            new TermsCommand(), 
+            new TermsCommand(),
             new PrivacyCommand(),
             new MyUserDataCommand(),
 
@@ -53,7 +53,7 @@ export default class InteractionHandler {
             new PurgeCommand(),
 
             // Verification Commands
-            
+
             new VerifyCommand(),
             new CodeCommand(),
             new LookupCommand(),

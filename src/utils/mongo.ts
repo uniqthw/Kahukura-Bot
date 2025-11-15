@@ -3,7 +3,12 @@
 import { Db, InsertOneResult, MongoClient } from "mongodb";
 import settings from "./settings";
 import { Snowflake } from "discord.js";
-import { DBModLogEntry, DBVerificationUser, ModLogEntry, VerificationMessageCache } from "../../@types";
+import {
+    DBModLogEntry,
+    DBVerificationUser,
+    ModLogEntry,
+    VerificationMessageCache
+} from "../../@types";
 
 export default class MongoDb {
     private static instance: MongoDb;
@@ -31,15 +36,19 @@ export default class MongoDb {
     }
 
     async updateVerificationUser(user: DBVerificationUser): Promise<void> {
-        await this.db.collection<DBVerificationUser>("verification").updateOne({ _id: user._id }, {
-            $set: {
-                email: user.email,
-                verified: user.verified,
-                banned: user.banned,
-                verificationData: user.verificationData,
-                manualVerificationData: user.manualVerificationData
-            }
-        }, { upsert: true });
+        await this.db.collection<DBVerificationUser>("verification").updateOne(
+            { _id: user._id },
+            {
+                $set: {
+                    email: user.email,
+                    verified: user.verified,
+                    banned: user.banned,
+                    verificationData: user.verificationData,
+                    manualVerificationData: user.manualVerificationData
+                }
+            },
+            { upsert: true }
+        );
     }
 
     async getVerificationUser(
@@ -51,14 +60,19 @@ export default class MongoDb {
         return user;
     }
 
-    async getVerificationUserByEmail(email: string): Promise<DBVerificationUser | null> {
+    async getVerificationUserByEmail(
+        email: string
+    ): Promise<DBVerificationUser | null> {
         const user = await this.db
             .collection<DBVerificationUser>("verification")
             .findOne({ email: email });
         return user;
     }
 
-    async getManyVerificationUsersByEmail(email: string, currentUserId: string): Promise<DBVerificationUser[]> {
+    async getManyVerificationUsersByEmail(
+        email: string,
+        currentUserId: string
+    ): Promise<DBVerificationUser[]> {
         const users = await this.db
             .collection<DBVerificationUser>("verification")
             .find({ email: email, _id: { $ne: currentUserId } })
@@ -96,26 +110,38 @@ export default class MongoDb {
     ): Promise<void> {
         await this.db
             .collection<DBVerificationUser>("verification")
-            .updateOne({ _id: id }, { $set: { lastDataRequest: lastDataRequest } });
+            .updateOne(
+                { _id: id },
+                { $set: { lastDataRequest: lastDataRequest } }
+            );
     }
 
     // Verification message cache methods, should only be used for messages sent within the Discord server
 
-    async setCacheVerificationMessage(memberId: Snowflake, messageId: Snowflake): Promise<void> {
+    async setCacheVerificationMessage(
+        memberId: Snowflake,
+        messageId: Snowflake
+    ): Promise<void> {
         await this.db
             .collection<VerificationMessageCache>("verificationMessageCache")
-            .updateOne({ _id: memberId }, {
-                $set: {
-                    messageId: messageId
-                }
-            }, { upsert: true });
+            .updateOne(
+                { _id: memberId },
+                {
+                    $set: {
+                        messageId: messageId
+                    }
+                },
+                { upsert: true }
+            );
     }
 
-    async lookupCacheVerificationMessage(memberId: Snowflake): Promise<VerificationMessageCache | null> {
+    async lookupCacheVerificationMessage(
+        memberId: Snowflake
+    ): Promise<VerificationMessageCache | null> {
         const verificationMessageCache = await this.db
             .collection<VerificationMessageCache>("verificationMessageCache")
             .findOne({ _id: memberId });
-        
+
         return verificationMessageCache;
     }
 
@@ -126,7 +152,9 @@ export default class MongoDb {
     }
 
     // Moderation Log Methods
-    async insertModLog(entry: ModLogEntry): Promise<InsertOneResult<DBModLogEntry>> {
+    async insertModLog(
+        entry: ModLogEntry
+    ): Promise<InsertOneResult<DBModLogEntry>> {
         return await this.db.collection<DBModLogEntry>("modlogs").insertOne({
             action: entry.action,
             targetId: entry.target.id,

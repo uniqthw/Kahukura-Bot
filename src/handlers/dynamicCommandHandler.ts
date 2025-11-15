@@ -8,11 +8,8 @@ export default class DynamicCommandHandler {
         const verifyCodeCommandID = commands?.find(
             (command) => command.name === "code"
         )?.id;
-        
-        
-        return verifyCodeCommandID
-            ? `</code:${verifyCodeCommandID}>`
-            : "/code";
+
+        return verifyCodeCommandID ? `</code:${verifyCodeCommandID}>` : "/code";
     }
 
     async getVerifyCommand(client: Client) {
@@ -20,8 +17,7 @@ export default class DynamicCommandHandler {
         const verifyCodeCommandID = commands?.find(
             (command) => command.name === "verify"
         )?.id;
-        
-        
+
         return verifyCodeCommandID
             ? `</verify:${verifyCodeCommandID}>`
             : "/verify";
