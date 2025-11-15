@@ -1,8 +1,7 @@
 import { Command } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, TextChannel, PermissionFlagsBits } from "discord.js";
-import { hasModeratorRole } from "../../utils/roleCheck";
-import { logModAction } from "../../utils/modlog";
-import settings from "../../../settings.json";
+import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, TextChannel, PermissionFlagsBits, InteractionContextType, Message } from "discord.js";
+import MessageLoggingHandler from "../../handlers/messageLoggingHandler";
+const messageLoggingHandler = new MessageLoggingHandler();
 
 export default class PurgeCommand implements Command {
     name = "purge";
@@ -11,73 +10,67 @@ export default class PurgeCommand implements Command {
         .setName(this.name)
         .setDescription(this.description)
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
+        .setContexts(InteractionContextType.Guild)
         .addIntegerOption(option =>
-            option.setName("amount").setDescription("Number of messages to delete (1-100)").setRequired(true)
-        )
-        .addUserOption(option =>
-            option.setName("user").setDescription("Only delete messages from this user").setRequired(false)
+            option.setName("amount").setDescription("Specify the number of messages to bulk delete.").setMinValue(1).setMaxValue(100).setRequired(true)
         )
         .addStringOption(option =>
-            option.setName("reason").setDescription("Reason for purge").setRequired(false)
+            option.setName("reason").setDescription("Please provide a justification for purging these messages.").setRequired(true)
+        )
+        .addUserOption(option =>
+            option.setName("user").setDescription("Specify if you would like to purge messages from a specific user.").setRequired(false)
         ) as SlashCommandBuilder);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {
-        // Always defer reply for interaction timing
         await interaction.deferReply({ ephemeral: true });
-        const member = interaction.member as GuildMember;
         
-        // Permission check: must have moderator role
-        if (!hasModeratorRole(member)) {
-            return await interaction.editReply({ content: "You do not have permission to use this command." });
-        }
-        
-        // Get command options
         const amount = interaction.options.getInteger("amount", true);
-        const targetUser = interaction.options.getUser("user");
-        const reason = interaction.options.getString("reason") || "No reason provided";
-        const channel = interaction.channel as TextChannel;
+        const targetUser = interaction.options.getUser("user", false);
+        const reason = interaction.options.getString("reason", true);
+
+        if (!interaction.channel || !interaction.channel.isTextBased()) return await interaction.editReply({ content: "You can only purge messages in a text channel." });
         
-        // Validate amount
-        if (amount < 1 || amount > 100) {
-            return await interaction.editReply({ content: "Amount must be between 1 and 100." });
-        }
+        if (amount < 1 || amount > 100) return await interaction.editReply({ content: "Amount must be between 1 and 100." });
+
+        let deletedMessages: Message[];
         
         try {
-            let deletedCount = 0;
+            let deletedCount: number;
+            const fetched = await interaction.channel.messages.fetch({ limit: amount });
             
             if (targetUser) {
-                // Delete messages from specific user
-                const messages = await channel.messages.fetch({ limit: 100 });
-                const userMessages = messages.filter(msg => msg.author.id === targetUser.id).first(amount);
+                // Bulk delete messages from a specific user
+
+                const userMessages = fetched.filter(msg => msg.author.id === targetUser.id);
+
+                if (userMessages.size === 0) return interaction.editReply("Unable to purge as no messages from that user were found in the last 100 messages in the channel.");
+
+                const deleted = await (interaction.channel as TextChannel).bulkDelete(userMessages, true);
                 
-                for (const message of userMessages.values()) {
-                    await message.delete();
-                    deletedCount++;
-                }
-            } else {
-                // Bulk delete messages
-                const deleted = await channel.bulkDelete(amount, true);
                 deletedCount = deleted.size;
+                deletedMessages = Array.from(deleted.values()).filter((msg): msg is Message => msg instanceof Message);
+            } else {
+                // Bulk delete messages from the entire channel
+                const deleted = await (interaction.channel as TextChannel).bulkDelete(fetched, true);
+                deletedCount = deleted.size;
+                deletedMessages = Array.from(deleted.values()).filter((msg): msg is Message => msg instanceof Message);
             }
-            
-            // Log moderation action
-            await logModAction({
-                action: "purge",
-                targetId: targetUser?.id || channel.id,
-                targetTag: targetUser?.tag || `#${channel.name}`,
-                moderatorId: member.user.id,
-                moderatorTag: member.user.tag,
-                reason: `${reason} (${deletedCount} messages deleted)`,
-                timestamp: Date.now(),
-                guildId: interaction.guild?.id || ""
-            });
+            // Log purge action
+            await messageLoggingHandler.logPurgeAction(
+                deletedMessages,
+                deletedCount,
+                interaction.user,
+                targetUser,
+                reason,
+                interaction.client
+            );
             
             return await interaction.editReply({ 
-                content: `Deleted ${deletedCount} messages${targetUser ? ` from <@${targetUser.id}>` : ''}. Reason: ${reason}` 
+                content: `Successfully purged ${deletedCount} messages.` 
             });
         } catch (err) {
-            // Error handling
-            return await interaction.editReply({ content: `Failed to purge messages: ${err}` });
+            await interaction.editReply({ content: "Failed to purge messages or log" });
+            return console.error("Failed to purge messages or log:", err)
         }
     }
 }

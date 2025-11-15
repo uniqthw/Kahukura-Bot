@@ -7,7 +7,9 @@ import {
     Events,
     Snowflake,
     Routes,
-    ChatInputCommandInteraction
+    ChatInputCommandInteraction,
+    AuditLogEvent,
+    User
 } from "discord.js";
 import settings from "../settings.json";
 
@@ -15,6 +17,9 @@ import InteractionHandler from "./handlers/interactionHandler";
 import VerificationJoinHandler from "./handlers/verificationJoinHandler";
 import VerificationBanHandler from "./handlers/verificationBanHandler";
 import DynamicCommandHandler from "./handlers/dynamicCommandHandler";
+import MessageLoggingHandler from './handlers/messageLoggingHandler';
+import ModLoggingHandler from "./handlers/modLoggingHandler";
+import { ModLogActions } from "../@types";
 
 class KahukuraApplication {
     private client: Client;
@@ -22,6 +27,8 @@ class KahukuraApplication {
     private verificationJoinHandler: VerificationJoinHandler;
     private verificationBanHandler: VerificationBanHandler;
     private dynamicCommandHandler: DynamicCommandHandler;
+    private messageLoggingHandler: MessageLoggingHandler;
+    private modLoggingHandler: ModLoggingHandler;
     private discordRestClient: REST;
 
     constructor() {
@@ -31,13 +38,15 @@ class KahukuraApplication {
 
         this.client = new Client({
             allowedMentions: {},
-            intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildModeration, GatewayIntentBits.GuildMessages]
+            intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildModeration, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]
         });
 
         this.interactionHandler = new InteractionHandler();
         this.verificationJoinHandler = new VerificationJoinHandler();
         this.verificationBanHandler = new VerificationBanHandler();
         this.dynamicCommandHandler = new DynamicCommandHandler();
+        this.messageLoggingHandler = new MessageLoggingHandler();
+        this.modLoggingHandler = new ModLoggingHandler();
         this.discordRestClient = new REST().setToken(settings.discord.token);
     }
 
@@ -58,7 +67,7 @@ class KahukuraApplication {
             });
     }
 
-    addClientEventHandlers() {
+    async addClientEventHandlers() {
         /* 
             Discord client event handlers.
         */
@@ -122,16 +131,134 @@ class KahukuraApplication {
             }
         });
 
-        this.client.on(Events.GuildBanAdd, (ban) => {
+        this.client.on(Events.GuildBanAdd, async (ban) => {
             if (ban.guild.id !== settings.discord.guildID) return;
 
+            const fetchedLogs = await ban.guild.fetchAuditLogs({
+                limit: 1,
+                type: AuditLogEvent.MemberBanAdd
+            });
+
+            const auditLog = fetchedLogs.entries.first();
+
+            if (
+                !auditLog ||
+                auditLog.executorId === this.client.user?.id
+            ) return;
+
+            const modLogEntry = {
+                action: ModLogActions.BAN,
+                target: (ban.user as User),
+                moderator: (auditLog.executor as User),
+                reason: ban.reason || "Not specified in non-bot execution of punishment.",
+                timestamp: auditLog.createdTimestamp
+            }
+
+            this.modLoggingHandler.logModAction(modLogEntry, this.client);
             this.verificationBanHandler.handleBanAdd(ban.user);
         });
 
-        this.client.on(Events.GuildBanRemove, (ban) => {
+        this.client.on(Events.GuildBanRemove, async (ban) => {
             if (ban.guild.id !== settings.discord.guildID) return;
 
+            const fetchedLogs = await ban.guild.fetchAuditLogs({
+                limit: 1,
+                type: AuditLogEvent.MemberBanRemove
+            });
+
+            const auditLog = fetchedLogs.entries.first();
+
+            if (
+                !auditLog ||
+                auditLog.executorId === this.client.user?.id
+            ) return;
+
+            const modLogEntry = {
+                action: ModLogActions.UNBAN,
+                target: (ban.user as User),
+                moderator: (auditLog.executor as User),
+                reason: ban.reason || "Not specified in non-bot execution of punishment.",
+                timestamp: auditLog.createdTimestamp
+            }
+
+            this.modLoggingHandler.logModAction(modLogEntry, this.client);
             this.verificationBanHandler.handleBanRemove(ban.user);
+        });
+
+        this.client.on(Events.MessageDelete, async (message) => {
+            await this.messageLoggingHandler.logMessageDelete(message, this.client);
+        });
+
+        this.client.on(Events.MessageUpdate, (oldMessage, newMessage) => {
+            this.messageLoggingHandler.logMessageUpdate(oldMessage, newMessage, this.client);
+        });
+
+        this.client.on(Events.GuildMemberRemove, async (member) => {
+            const fetchedLogs = await member.guild.fetchAuditLogs({
+                limit: 1,
+                type: AuditLogEvent.MemberKick
+            });
+
+            const auditLog = fetchedLogs.entries.first();
+
+            if (
+                !auditLog ||
+                auditLog.executorId === this.client.user?.id ||
+                (member.joinedAt && auditLog.createdAt < member.joinedAt)
+            ) return;
+
+            const modLogEntry = {
+                action: ModLogActions.KICK,
+                target: (member.user as User),
+                moderator: (auditLog.executor as User),
+                reason: auditLog.reason || "Not specified in non-bot execution of punishment.",
+                timestamp: auditLog.createdTimestamp
+            }
+
+            this.modLoggingHandler.logModAction(modLogEntry, this.client);
+        });
+
+        this.client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
+            const fetchedLogs = await newMember.guild.fetchAuditLogs({
+                limit: 1,
+                type: AuditLogEvent.MemberUpdate
+            });
+
+            const auditLog = fetchedLogs.entries.first();
+
+            if (
+                !auditLog ||
+                auditLog.executorId === this.client.user?.id
+            ) return;
+
+            if (oldMember.communicationDisabledUntil !== newMember.communicationDisabledUntil) {
+                if (newMember.communicationDisabledUntil === null) {
+                    const modLogEntry = {
+                        action: ModLogActions.UNTIMEOUT,
+                        target: (newMember.user as User),
+                        moderator: (auditLog.executor as User),
+                        reason: auditLog.reason || "Not specified in non-bot execution of punishment.",
+                        timestamp: auditLog.createdTimestamp
+                    }
+        
+                    this.modLoggingHandler.logModAction(modLogEntry, this.client);
+                } else if (newMember.communicationDisabledUntil !== null && newMember.communicationDisabledUntilTimestamp !== null) {
+                    const duration = newMember.communicationDisabledUntilTimestamp - auditLog.createdTimestamp;
+
+                    const modLogEntry = {
+                        action: ModLogActions.TIMEOUT,
+                        target: (newMember.user as User),
+                        moderator: (auditLog.executor as User),
+                        reason: auditLog.reason || "Not specified in non-bot execution of punishment.",
+                        timestamp: auditLog.createdTimestamp,
+                        duration: {
+                            expiry: auditLog.createdTimestamp + duration
+                        }
+                    }
+        
+                    this.modLoggingHandler.logModAction(modLogEntry, this.client);
+                }
+            }
         });
     }
 

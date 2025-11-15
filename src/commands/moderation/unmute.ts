@@ -1,8 +1,8 @@
-import { Command } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, PermissionFlagsBits } from "discord.js";
-import { hasModeratorRole } from "../../utils/roleCheck";
-import { logModAction } from "../../utils/modlog";
-import settings from "../../../settings.json";
+import { Command, ModLogActions } from "../../../@types";
+import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, PermissionFlagsBits, userMention } from "discord.js";
+
+import ModLoggingHandler from '../../handlers/modLoggingHandler';
+const modLoggingHandler = new ModLoggingHandler();
 
 export default class UnmuteCommand implements Command {
     name = "unmute";
@@ -12,51 +12,46 @@ export default class UnmuteCommand implements Command {
         .setDescription(this.description)
         .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
         .addUserOption(option =>
-            option.setName("user").setDescription("User to unmute").setRequired(true)
+            option.setName("user").setDescription("Specify the user you are un-timing out.").setRequired(true)
         )
         .addStringOption(option =>
-            option.setName("reason").setDescription("Reason for unmute").setRequired(false)
+            option.setName("reason").setDescription("Please provide a justification for un-timing out this user.").setRequired(true)
         ) as SlashCommandBuilder);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {
         // Always defer reply for interaction timing
         await interaction.deferReply({ ephemeral: true });
-        const member = interaction.member as GuildMember;
+
+        if (!interaction.guild) return await interaction.editReply("This command needs to be executed within the server.");
         
-        // Permission check: must have moderator role
-        if (!hasModeratorRole(member)) {
-            return await interaction.editReply({ content: "You do not have permission to use this command." });
-        }
-        
-        // Get command options
         const user = interaction.options.getUser("user", true);
-        const reason = interaction.options.getString("reason") || "No reason provided";
+        const reason = interaction.options.getString("reason", true);
         
         try {
-            // Remove timeout
-            const guildMember = await interaction.guild?.members.fetch(user.id);
-            if (!guildMember) throw new Error("User not found in guild.");
-            
-            await guildMember.timeout(null, `Unmuted by ${member.user.tag}: ${reason}`);
-            
+            // Un-timeout user
+            let member: GuildMember;
+            try {
+                member = await interaction.guild.members.fetch(user.id);
+            } catch {
+                return await interaction.editReply("The target user is not in the server.");
+            }
+
+            await member.timeout(null, reason)
+
             // Log moderation action
-            await logModAction({
-                action: "unmute",
-                targetId: user.id,
-                targetTag: user.tag,
-                moderatorId: member.user.id,
-                moderatorTag: member.user.tag,
+            await modLoggingHandler.logModAction({
+                action: ModLogActions.UNTIMEOUT,
+                target: user,
+                moderator: interaction.user,
                 reason,
-                timestamp: Date.now(),
-                guildId: interaction.guild?.id || ""
-            });
+                timestamp: Date.now()
+            }, interaction.client);
             
             return await interaction.editReply({ 
-                content: `User <@${user.id}> has been unmuted. Reason: ${reason}` 
+                content: `${userMention(user.id)} has had their timeout removed.` 
             });
         } catch (err) {
-            // Error handling
-            return await interaction.editReply({ content: `Failed to unmute user: ${err}` });
+            return await interaction.editReply({ content: `Failed to untimeout user or log: ${err}` });
         }
     }
 }

@@ -1,8 +1,9 @@
-import { Command } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, PermissionFlagsBits } from "discord.js";
-import { hasModeratorRole } from "../../utils/roleCheck";
-import { logModAction } from "../../utils/modlog";
-import settings from "../../../settings.json";
+import { Command, ModLogActions } from "../../../@types";
+import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, PermissionFlagsBits, userMention } from "discord.js";
+
+import ModLoggingHandler from "../../handlers/modLoggingHandler";
+
+const modLoggingHandler = new ModLoggingHandler();
 
 export default class UnbanCommand implements Command {
     name = "unban";
@@ -11,59 +12,40 @@ export default class UnbanCommand implements Command {
         .setName(this.name)
         .setDescription(this.description)
         .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
-        .addStringOption(option =>
-            option.setName("user_id").setDescription("User ID to unban").setRequired(true)
+        .addUserOption(option =>
+            option.setName("user").setDescription("Specify the user you are unbanning.").setRequired(true)
         )
         .addStringOption(option =>
-            option.setName("reason").setDescription("Reason for unban").setRequired(false)
+            option.setName("reason").setDescription("Please provide a justification for unbanning this user.").setRequired(true)
         ) as SlashCommandBuilder);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {
-        // Always defer reply for interaction timing
         await interaction.deferReply({ ephemeral: true });
-        const member = interaction.member as GuildMember;
         
-        // Permission check: must have moderator role
-        if (!hasModeratorRole(member)) {
-            return await interaction.editReply({ content: "You do not have permission to use this command." });
-        }
+        if (!interaction.guild) return await interaction.editReply("This command needs to be executed within the server.");
         
-        // Get command options
-        const userId = interaction.options.getString("user_id", true);
-        const reason = interaction.options.getString("reason") || "No reason provided";
-        
+        const user = interaction.options.getUser("user", true);
+        const reason = interaction.options.getString("reason", true);
+
         try {
             // Unban user
-            await interaction.guild?.members.unban(userId, `Unbanned by ${member.user.tag}: ${reason}`);
-            
-            // Try to get user info for logging
-            let userTag = userId;
-            try {
-                const user = await interaction.client.users.fetch(userId);
-                userTag = user.tag;
-            } catch {
-                // If we can't fetch the user, just use the ID
-                userTag = `Unknown User (${userId})`;
-            }
+            await interaction.guild.members.unban(user.id, reason);
             
             // Log moderation action
-            await logModAction({
-                action: "unban",
-                targetId: userId,
-                targetTag: userTag,
-                moderatorId: member.user.id,
-                moderatorTag: member.user.tag,
+            await modLoggingHandler.logModAction({
+                action: ModLogActions.UNBAN,
+                target: user,
+                moderator: interaction.user,
                 reason,
-                timestamp: Date.now(),
-                guildId: interaction.guild?.id || ""
-            });
+                timestamp: Date.now()
+            }, interaction.client);
             
             return await interaction.editReply({ 
-                content: `User <@${userId}> has been unbanned. Reason: ${reason}` 
+                content: `${userMention(user.id)} has been unbanned.` 
             });
         } catch (err) {
-            // Error handling
-            return await interaction.editReply({ content: `Failed to unban user: ${err}` });
+            await interaction.editReply("Failed to unban user or log.");
+            return console.error("Failed to unban user or log:", err)
         }
     }
 }

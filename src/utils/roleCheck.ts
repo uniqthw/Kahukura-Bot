@@ -8,11 +8,6 @@ import settings from "../../settings.json";
  * @param member The guild member to check
  * @returns true if the member has the moderator role, false otherwise
  */
-export function hasModeratorRole(member: GuildMember): boolean {
-    const moderatorRoleId = settings.discord.rolesID.moderator;
-    return member.roles.cache.has(moderatorRoleId);
-}
-
 export function isCheckuser(user: User): boolean {
     const checkuserArray = settings.discord.usersID.checkuser;
 

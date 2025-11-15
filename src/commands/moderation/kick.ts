@@ -1,8 +1,8 @@
-import { Command } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder, GuildMember, PermissionFlagsBits } from "discord.js";
-import { hasModeratorRole } from "../../utils/roleCheck";
-import { logModAction } from "../../utils/modlog";
-import settings from "../../../settings.json";
+import { Command, ModLogActions } from "../../../@types";
+import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits, InteractionContextType, userMention, GuildMember } from "discord.js";
+import ModLoggingHandler from "../../handlers/modLoggingHandler";
+
+const modLoggingHandler = new ModLoggingHandler();
 
 export default class KickCommand implements Command {
     name = "kick";
@@ -10,53 +10,49 @@ export default class KickCommand implements Command {
     slashCommand = (new SlashCommandBuilder()
         .setName(this.name)
         .setDescription(this.description)
+        .setContexts(InteractionContextType.Guild)
         .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers)
         .addUserOption(option =>
-            option.setName("user").setDescription("User to kick").setRequired(true)
+            option.setName("user").setDescription("Specify the user you are kicking.").setRequired(true)
         )
         .addStringOption(option =>
-            option.setName("reason").setDescription("Reason for kick").setRequired(false)
+            option.setName("reason").setDescription("Please provide a justification for kicking this user.").setRequired(true)
         ) as SlashCommandBuilder);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {
-        // Always defer reply for interaction timing
         await interaction.deferReply({ ephemeral: true });
-        const member = interaction.member as GuildMember;
+
+        if (!interaction.guild) return await interaction.editReply("This command needs to be executed within the server.");
         
-        // Permission check: must have moderator role
-        if (!hasModeratorRole(member)) {
-            return await interaction.editReply({ content: "You do not have permission to use this command." });
-        }
-        
-        // Get command options
         const user = interaction.options.getUser("user", true);
-        const reason = interaction.options.getString("reason") || "No reason provided";
+        const reason = interaction.options.getString("reason", true);
+        
         
         try {
-            // Kick user
-            const guildMember = await interaction.guild?.members.fetch(user.id);
-            if (!guildMember) throw new Error("User not found in guild.");
+            let member: GuildMember;
+            try {
+                member = await interaction.guild.members.fetch(user.id);
+            } catch {
+                return await interaction.editReply("The target user is not in the server.");
+            }
             
-            await guildMember.kick(`Kicked by ${member.user.tag}: ${reason}`);
+            // Kick user
+            await member.kick(reason);
             
             // Log moderation action
-            await logModAction({
-                action: "kick",
-                targetId: user.id,
-                targetTag: user.tag,
-                moderatorId: member.user.id,
-                moderatorTag: member.user.tag,
+            await modLoggingHandler.logModAction({
+                action: ModLogActions.KICK,
+                target: user,
+                moderator: interaction.user,
                 reason,
-                timestamp: Date.now(),
-                guildId: interaction.guild?.id || ""
-            });
+                timestamp: Date.now()
+            }, interaction.client);
             
             return await interaction.editReply({ 
-                content: `User <@${user.id}> has been kicked. Reason: ${reason}` 
+                content: `${userMention(user.id)} has been kicked.` 
             });
         } catch (err) {
-            // Error handling
-            return await interaction.editReply({ content: `Failed to kick user: ${err}` });
+            return await interaction.editReply({ content: `Failed to kick user or log: ${err}` });
         }
     }
 }

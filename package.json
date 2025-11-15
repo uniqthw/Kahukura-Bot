@@ -32,10 +32,13 @@
   "homepage": "https://github.com/uniqthw/Kahukura-Bot#readme",
   "packageManager": "pnpm@10.22.0",
   "dependencies": {
+    "@types/humanize-duration": "^3.27.4",
     "@types/nodemailer": "^7.0.3",
     "discord.js": "^14.24.2",
     "mongodb": "^7.0.0",
-    "nodemailer": "^7.0.10"
+    "nodemailer": "^7.0.10",
+    "parse-duration-ms": "^0.1.0",
+    "pretty-ms": "^9.3.0"
   },
   "devDependencies": {
     "prettier": "3.6.2",
