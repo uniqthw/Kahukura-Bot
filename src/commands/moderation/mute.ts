@@ -59,7 +59,7 @@ export default class MuteCommand implements Command {
                 content: `${userMention(user.id)} has been timed out.` 
             });
         } catch (err) {
-            return await interaction.editReply({ content: `Failed to timeout user: ${err}` });
+            return await interaction.editReply({ content: `Failed to timeout user or log: ${err}` });
         }
     }
 }

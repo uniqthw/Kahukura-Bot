@@ -69,8 +69,8 @@ export default class PurgeCommand implements Command {
                 content: `Successfully purged ${deletedCount} messages.` 
             });
         } catch (err) {
-            await interaction.editReply({ content: "Failed to purge messages" });
-            return console.error("Failed to purge messages:", err)
+            await interaction.editReply({ content: "Failed to purge messages or log" });
+            return console.error("Failed to purge messages or log:", err)
         }
     }
 }

@@ -44,8 +44,8 @@ export default class UnbanCommand implements Command {
                 content: `${userMention(user.id)} has been unbanned.` 
             });
         } catch (err) {
-            await interaction.editReply("Failed to unban user.");
-            return console.error("Failed to unban user:", err)
+            await interaction.editReply("Failed to unban user or log.");
+            return console.error("Failed to unban user or log:", err)
         }
     }
 }

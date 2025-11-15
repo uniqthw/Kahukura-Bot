@@ -47,7 +47,7 @@ export default class UnmuteCommand implements Command {
                 content: `${userMention(user.id)} has had their timeout removed.` 
             });
         } catch (err) {
-            return await interaction.editReply({ content: `Failed to untimeout user: ${err}` });
+            return await interaction.editReply({ content: `Failed to untimeout user or log: ${err}` });
         }
     }
 }

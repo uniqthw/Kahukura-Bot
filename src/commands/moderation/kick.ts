@@ -45,7 +45,7 @@ export default class KickCommand implements Command {
                 content: `${userMention(user.id)} has been kicked.` 
             });
         } catch (err) {
-            return await interaction.editReply({ content: `Failed to kick user: ${err}` });
+            return await interaction.editReply({ content: `Failed to kick user or log: ${err}` });
         }
     }
 }

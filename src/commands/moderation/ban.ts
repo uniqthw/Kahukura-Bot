@@ -45,8 +45,8 @@ export default class BanCommand implements Command {
                 content: `${userMention(user.id)} has been banned.` 
             });
         } catch (err) {
-            await interaction.editReply("Failed to ban user.");
-            return console.error("Failed to ban user:", err)
+            await interaction.editReply("Failed to ban user or log.");
+            return console.error("Failed to ban user or log:", err)
         }
     }
 }
