@@ -20,6 +20,8 @@ export default class DeleteUserDataCommand implements Command {
         ) as SlashCommandBuilder);
 
     async execute(interaction: ChatInputCommandInteraction): Promise<any> {
+        await interaction.deferReply({ ephemeral: true });
+
         // Check if the user has admin permissions
         if (!isITAdmin(interaction.user)) {
             return await interaction.editReply({
@@ -28,8 +30,6 @@ export default class DeleteUserDataCommand implements Command {
         }
 
         const user = interaction.options.getUser("user", true);
-
-        await interaction.deferReply({ ephemeral: true });
 
         const verificationUser = await MongoDb.getInstance().getVerificationUser(user.id);
 
