@@ -3,15 +3,18 @@
 import { APIInteractionGuildMember, GuildMember, User } from "discord.js";
 import settings from "./settings";
 
-/**
- * Check if a guild member has the moderator role
- * @param member The guild member to check
- * @returns true if the member has the moderator role, false otherwise
- */
 export function isCheckuser(user: User): boolean {
     const checkuserArray = settings.discord.usersID.checkuser;
 
     if (Array.isArray(checkuserArray) && checkuserArray.includes(user.id)) return true;
+
+    return false;
+}
+
+export function isITAdmin(user: User): boolean {
+    const itAdminArray = settings.discord.usersID.itadmins;
+
+    if (Array.isArray(itAdminArray) && itAdminArray.includes(user.id)) return true;
 
     return false;
 }

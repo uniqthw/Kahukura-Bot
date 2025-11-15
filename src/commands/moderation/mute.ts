@@ -1,5 +1,5 @@
 import { Command, ModLogActions } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits, userMention, GuildMember } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits, userMention, GuildMember, InteractionContextType } from "discord.js";
 import parseDuration from "parse-duration-ms";
 
 import ModLoggingHandler from '../../handlers/modLoggingHandler';
@@ -11,6 +11,7 @@ export default class MuteCommand implements Command {
     slashCommand = (new SlashCommandBuilder()
         .setName(this.name)
         .setDescription(this.description)
+        .setContexts(InteractionContextType.Guild)
         .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
         .addUserOption(option =>
             option.setName("user").setDescription("Specify the user you are timing out.").setRequired(true)
