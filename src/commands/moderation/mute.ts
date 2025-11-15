@@ -1,5 +1,5 @@
 import { Command, ModLogActions } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits, userMention } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits, userMention, GuildMember } from "discord.js";
 import parseDuration from "parse-duration-ms";
 
 import ModLoggingHandler from '../../handlers/modLoggingHandler';
@@ -37,8 +37,12 @@ export default class MuteCommand implements Command {
         
         try {
             // Timeout user
-            const member = await interaction.guild.members.fetch(user.id);
-            if (!member) return await interaction.editReply("The target user is not in the server.");
+            let member: GuildMember;
+            try {
+                member = await interaction.guild.members.fetch(user.id);
+            } catch {
+                return await interaction.editReply("The target user is not in the server.");
+            }
 
             await member.timeout(duration, reason)
 

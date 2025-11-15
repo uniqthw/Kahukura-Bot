@@ -1,5 +1,5 @@
 import { Command, ModLogActions } from "../../../@types";
-import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits, InteractionContextType, userMention } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits, InteractionContextType, userMention, GuildMember } from "discord.js";
 import ModLoggingHandler from "../../handlers/modLoggingHandler";
 
 const modLoggingHandler = new ModLoggingHandler();
@@ -29,8 +29,15 @@ export default class KickCommand implements Command {
         
         
         try {
+            let member: GuildMember;
+            try {
+                member = await interaction.guild.members.fetch(user.id);
+            } catch {
+                return await interaction.editReply("The target user is not in the server.");
+            }
+            
             // Kick user
-            await interaction.guild.members.kick(user.id, reason);
+            await member.kick(reason);
             
             // Log moderation action
             await modLoggingHandler.logModAction({

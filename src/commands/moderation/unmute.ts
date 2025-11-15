@@ -29,8 +29,12 @@ export default class UnmuteCommand implements Command {
         
         try {
             // Un-timeout user
-            const member = await interaction.guild.members.fetch(user.id);
-            if (!member) return await interaction.editReply("The target user is not in the server.");
+            let member: GuildMember;
+            try {
+                member = await interaction.guild.members.fetch(user.id);
+            } catch {
+                return await interaction.editReply("The target user is not in the server.");
+            }
 
             await member.timeout(null, reason)
 
