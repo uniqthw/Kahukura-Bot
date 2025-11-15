@@ -11,7 +11,7 @@ import {
     AuditLogEvent,
     User
 } from "discord.js";
-import settings from "../settings.json";
+import settings from "./utils/settings";
 
 import InteractionHandler from "./handlers/interactionHandler";
 import VerificationJoinHandler from "./handlers/verificationJoinHandler";
