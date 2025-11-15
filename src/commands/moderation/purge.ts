@@ -47,7 +47,7 @@ export default class PurgeCommand implements Command {
 
                 const deleted = await (interaction.channel as TextChannel).bulkDelete(userMessages, true);
                 
-                deletedCount = userMessages.size;
+                deletedCount = deleted.size;
                 deletedMessages = Array.from(deleted.values()).filter((msg): msg is Message => msg instanceof Message);
             } else {
                 // Bulk delete messages from the entire channel
