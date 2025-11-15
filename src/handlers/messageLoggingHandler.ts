@@ -91,7 +91,7 @@ export default class MessageLoggingHandler {
 
         await messageLogChannel.sendTyping();
         try {
-            await messageLogChannel.send({ components: components, flags: MessageFlags.IsComponentsV2, files: [attachment] });
+            await messageLogChannel.send({ components: components, flags: MessageFlags.IsComponentsV2, ...(attachment && { files: [attachment] }) });
         } catch (error) {
             console.error(error)
         }
