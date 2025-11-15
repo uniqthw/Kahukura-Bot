@@ -44,6 +44,11 @@ client.once("ready", async () => {
     }
 
     console.log("Done!");
+    client.destroy();
+    process.exit(0);
 });
 
-client.login(TOKEN);
+client.login(TOKEN).catch(error => {
+    console.error("Failed to login:", error);
+    process.exit(1);
+});
