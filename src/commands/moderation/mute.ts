@@ -40,7 +40,7 @@ export default class MuteCommand implements Command {
             const member = await interaction.guild.members.fetch(user.id);
             if (!member) return await interaction.editReply("The target user is not in the server.");
 
-            member.timeout(duration, reason)
+            await member.timeout(duration, reason)
 
             // Log moderation action
             await modLoggingHandler.logModAction({
