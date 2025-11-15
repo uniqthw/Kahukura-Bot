@@ -32,7 +32,7 @@ services:
       mongodb:
         condition: service_healthy
     volumes:
-      - /opt/kahukurabot/settings.json:/app/settings.json:ro
+      - /opt/kahukurabot/settings.json:/app/dist/settings.json:ro
     networks:
       - kahukura-network
 
