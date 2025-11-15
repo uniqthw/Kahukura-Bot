@@ -6,7 +6,10 @@
   "scripts": {
     "start": "ts-node src/app.ts",
     "pretty": "pnpm exec prettier src/ --write",
-    "build": "rm -rf dist && tsc"
+    "build": "rm -rf dist && tsc",
+    "docker:build": "docker compose build --no-cache",
+    "docker:run": "docker compose up -d",
+    "scripts:massApplyUnverified": "ts-node scripts/massApplyUnverified.ts"
   },
   "repository": {
     "type": "git",
