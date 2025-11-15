@@ -115,7 +115,7 @@ export default class MessageLoggingHandler {
             new TextDisplayBuilder().setContent(`-# Deleted at ~<t:${Math.floor(Date.now() / 1000)}:F>.`),
             new TextDisplayBuilder().setContent(`**Sender:** ${userMention(message.author.id)} [\`${message.author.id}\`]`),
             new TextDisplayBuilder().setContent(`**Created at:** <t:${Math.floor(message.createdTimestamp / 1000)}:F>`),
-            new TextDisplayBuilder().setContent(`**Last edited at:** <t:${Math.floor(message.editedTimestamp || message.createdTimestamp / 1000)}:F>`),
+            new TextDisplayBuilder().setContent(`**Last edited at:** <t:${Math.floor((message.editedTimestamp || message.createdTimestamp) / 1000)}:F>`),
             new TextDisplayBuilder().setContent(`${message.url}`),
             new TextDisplayBuilder().setContent("## Content"),
             new TextDisplayBuilder().setContent(message.content || "None")
@@ -191,7 +191,7 @@ export default class MessageLoggingHandler {
             new TextDisplayBuilder().setContent(`-# Edited at ~<t:${Math.floor(Date.now() / 1000)}:F>.`),
             new TextDisplayBuilder().setContent(`**Sender:** ${userMention(message.author.id)} [\`${message.author.id}\`]`),
             new TextDisplayBuilder().setContent(`**Created at:** <t:${Math.floor(message.createdTimestamp / 1000)}:F>`),
-            new TextDisplayBuilder().setContent(`**Previously last edited at:** <t:${Math.floor(message.editedTimestamp || message.createdTimestamp / 1000)}:F>`),
+            new TextDisplayBuilder().setContent(`**Previously last edited at:** <t:${Math.floor((message.editedTimestamp || message.createdTimestamp) / 1000)}:F>`),
             new TextDisplayBuilder().setContent(`${message.url}`),
             new TextDisplayBuilder().setContent("## Previous Content"),
             new TextDisplayBuilder().setContent(message.content || "None"),
