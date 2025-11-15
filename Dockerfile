@@ -54,5 +54,5 @@ RUN chown -R botuser:botuser /app
 # Switch to non-root user
 USER botuser
 
-# Start the bot
-CMD ["node", "dist/app.js"]
+# Start the bot - CORRECTED PATH
+CMD ["node", "dist/src/app.js"]
