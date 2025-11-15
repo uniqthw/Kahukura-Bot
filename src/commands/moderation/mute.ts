@@ -1,6 +1,6 @@
 import { Command, ModLogActions } from "../../../@types";
 import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits, userMention } from "discord.js";
-import parse from "parse-duration";
+import parseDuration from "parse-duration-ms";
 
 import ModLoggingHandler from '../../handlers/modLoggingHandler';
 const modLoggingHandler = new ModLoggingHandler;
@@ -32,7 +32,7 @@ export default class MuteCommand implements Command {
         const rawDuration = interaction.options.getString("duration", true);
         const reason = interaction.options.getString("reason", true);
 
-        const duration = parse(rawDuration);
+        const duration = parseDuration(rawDuration);
         if (!duration || duration < 60000 || duration >= 2419200000) return await interaction.editReply("The specified duration is invalid (must be at least 60 seconds, and shorter than 28 days).");
         
         try {

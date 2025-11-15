@@ -17,18 +17,18 @@ importers:
       discord.js:
         specifier: ^14.24.2
         version: 14.24.2
-      humanize-duration:
-        specifier: ^3.33.1
-        version: 3.33.1
       mongodb:
         specifier: ^7.0.0
         version: 7.0.0
       nodemailer:
         specifier: ^7.0.10
         version: 7.0.10
-      parse-duration:
-        specifier: ^2.1.4
-        version: 2.1.4
+      parse-duration-ms:
+        specifier: ^0.1.0
+        version: 0.1.0
+      pretty-ms:
+        specifier: ^9.3.0
+        version: 9.3.0
     devDependencies:
       prettier:
         specifier: 3.6.2
@@ -473,9 +473,6 @@ packages:
     resolution: {integrity: sha512-pfX9uG9Ki0yekDHx2SiuRIyFdyAr1kMIMitPvb0YBo8SUfKvia7w7FIyd/l6av85pFYRhZscS75MwMnbvY+hcQ==}
     hasBin: true
 
-  humanize-duration@3.33.1:
-    resolution: {integrity: sha512-hwzSCymnRdFx9YdRkQQ0OYequXiVAV6ZGQA2uzocwB0F4309Ke6pO8dg0P8LHhRQJyVjGteRTAA/zNfEcpXn8A==}
-
   lodash.snakecase@4.1.1:
     resolution: {integrity: sha512-QZ1d4xoBHYUeuouhEq3lk3Uq7ldgyFXGBhg04+oRLnIz8o9T65Eh+8YdroUwn846zchkA9yDsDl5CVVaV2nqYw==}
 
@@ -526,13 +523,22 @@ packages:
     resolution: {integrity: sha512-Us/Se1WtT0ylXgNFfyFSx4LElllVLJXQjWi2Xz17xWw7amDKO2MLtFnVp1WACy7GkVGs+oBlRopVNUzlrGSw1w==}
     engines: {node: '>=6.0.0'}
 
-  parse-duration@2.1.4:
-    resolution: {integrity: sha512-b98m6MsCh+akxfyoz9w9dt0AlH2dfYLOBss5SdDsr9pkhKNvkWBXU/r8A4ahmIGByBOLV2+4YwfCuFxbDDaGyg==}
+  parse-duration-ms@0.1.0:
+    resolution: {integrity: sha512-6yvHGGtBLcxF7pXLOxDOSCD8hnAycp1uiS+4vJ2x5O01wxC0mbEg5Zyc1Ru/+Sj5He/D+IwvQTFQ1SuJ/yAL0g==}
+    engines: {node: '>=20'}
+
+  parse-ms@4.0.0:
+    resolution: {integrity: sha512-TXfryirbmq34y8QBwgqCVLi+8oA3oWx2eAnSn62ITyEhEYaWRlVZ2DvMM9eZbMs/RfxPu/PK/aBLyGj4IrqMHw==}
+    engines: {node: '>=18'}
 
   prettier@3.6.2:
     resolution: {integrity: sha512-I7AIg5boAr5R0FFtJ6rCfD+LFsWHp81dolrFD8S79U9tb8Az2nGrJncnMSnys+bpQJfRUzqs9hnA81OAA3hCuQ==}
     engines: {node: '>=14'}
     hasBin: true
+
+  pretty-ms@9.3.0:
+    resolution: {integrity: sha512-gjVS5hOP+M3wMm5nmNOucbIrqudzs9v/57bWRHQWLYklXqoXKrVfYW2W9+glfGsqtPgpiz5WwyEEB+ksXIx3gQ==}
+    engines: {node: '>=18'}
 
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
@@ -1423,8 +1429,6 @@ snapshots:
     dependencies:
       strnum: 2.1.1
 
-  humanize-duration@3.33.1: {}
-
   lodash.snakecase@4.1.1: {}
 
   lodash@4.17.21: {}
@@ -1448,9 +1452,15 @@ snapshots:
 
   nodemailer@7.0.10: {}
 
-  parse-duration@2.1.4: {}
+  parse-duration-ms@0.1.0: {}
+
+  parse-ms@4.0.0: {}
 
   prettier@3.6.2: {}
+
+  pretty-ms@9.3.0:
+    dependencies:
+      parse-ms: 4.0.0
 
   punycode@2.3.1: {}
 

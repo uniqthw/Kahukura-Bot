@@ -35,10 +35,10 @@
     "@types/humanize-duration": "^3.27.4",
     "@types/nodemailer": "^7.0.3",
     "discord.js": "^14.24.2",
-    "humanize-duration": "^3.33.1",
     "mongodb": "^7.0.0",
     "nodemailer": "^7.0.10",
-    "parse-duration": "^2.1.4"
+    "parse-duration-ms": "^0.1.0",
+    "pretty-ms": "^9.3.0"
   },
   "devDependencies": {
     "prettier": "3.6.2",

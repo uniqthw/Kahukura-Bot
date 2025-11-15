@@ -4,7 +4,7 @@ import { Client, ContainerBuilder, MessageFlags, TextDisplayBuilder, userMention
 import { ModLogEntry } from "../../@types";
 import MongoDb from "../utils/mongo";
 import { ModLogActions } from '../../@types/index';
-import humanizeDuration from "humanize-duration";
+import prettyMilliseconds from "pretty-ms";
 import settings from "../../settings.json";
 
 enum ModLogColours {
@@ -35,7 +35,7 @@ export default class ModLoggingHandler {
         // Add duration and expiry if they exist
         if (entry.duration?.length) {
             textDisplayComponents.push(
-                new TextDisplayBuilder().setContent(`**Duration:** ${humanizeDuration(entry.duration.length)}`)
+                new TextDisplayBuilder().setContent(`**Duration:** ${prettyMilliseconds(entry.duration.length, { verbose: true })}`)
             );
         }
 
