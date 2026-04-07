@@ -16,6 +16,7 @@ import settings from "./utils/settings";
 import InteractionHandler from "./handlers/interactionHandler";
 import VerificationJoinHandler from "./handlers/verificationJoinHandler";
 import VerificationBanHandler from "./handlers/verificationBanHandler";
+import DirectMessageHandler from "./handlers/directMessageHandler";
 import DynamicCommandHandler from "./handlers/dynamicCommandHandler";
 import MessageLoggingHandler from "./handlers/messageLoggingHandler";
 import ModLoggingHandler from "./handlers/modLoggingHandler";
@@ -27,6 +28,7 @@ class KahukuraApplication {
     private verificationJoinHandler: VerificationJoinHandler;
     private verificationBanHandler: VerificationBanHandler;
     private dynamicCommandHandler: DynamicCommandHandler;
+    private directMessageHandler: DirectMessageHandler;
     private messageLoggingHandler: MessageLoggingHandler;
     private modLoggingHandler: ModLoggingHandler;
     private discordRestClient: REST;
@@ -51,6 +53,7 @@ class KahukuraApplication {
         this.verificationJoinHandler = new VerificationJoinHandler();
         this.verificationBanHandler = new VerificationBanHandler();
         this.dynamicCommandHandler = new DynamicCommandHandler();
+        this.directMessageHandler = new DirectMessageHandler();
         this.messageLoggingHandler = new MessageLoggingHandler();
         this.modLoggingHandler = new ModLoggingHandler();
         this.discordRestClient = new REST().setToken(settings.discord.token);
@@ -225,6 +228,12 @@ class KahukuraApplication {
         });
 
         this.client.on(Events.GuildMemberRemove, async (member) => {
+            // If the user leaves the server, or is kicked, delete the verification message if it still exists.
+            await this.directMessageHandler.deleteOldVerificationMessage(
+                member.user,
+                this.client
+            );
+
             const fetchedLogs = await member.guild.fetchAuditLogs({
                 limit: 1,
                 type: AuditLogEvent.MemberKick
