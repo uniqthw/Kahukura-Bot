@@ -8,7 +8,6 @@
         },
         "channelsID": {
             "unverified": "your-server-unverified-channelID",
-            "socials": "your-server-socials-news-channelID",
             "modPunishmentLog": "your-server-log-punishment-channelID",
             "messageLog": "your-server-log-message-channelID"
         },

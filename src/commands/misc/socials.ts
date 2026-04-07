@@ -5,7 +5,10 @@ import {
     ChatInputCommandInteraction,
     WebhookClient,
     PermissionFlagsBits,
-    InteractionContextType
+    InteractionContextType,
+    APIMessage,
+    ChannelType,
+    GuildChannel
 } from "discord.js";
 import { Command } from "../../../@types";
 import settings from "../../utils/settings";
@@ -46,9 +49,11 @@ export default class SocialCommand implements Command {
         });
 
         try {
-            await webhook.send({
+            const webhookMessage = await webhook.send({
                 content: link
             });
+
+            await this.crosspost(webhookMessage.id, webhookMessage.channel_id, interaction);
         } catch (error) {
             console.error(
                 "Failed to send social media post to webhook: ",
@@ -70,5 +75,27 @@ export default class SocialCommand implements Command {
             content:
                 "The social media post URL has been published on the Discord server successfully."
         });
+    }
+
+    async crosspost(messageID: APIMessage["id"], channelID: GuildChannel["id"], interaction: ChatInputCommandInteraction): Promise<void> {
+        const channel = await interaction.client.channels.fetch(channelID);
+
+        if (!channel || channel.type !== ChannelType.GuildAnnouncement) {
+            console.error("Invalid channel ID for crossposting.");
+            return;
+        }
+
+        try {
+            const message = await channel.messages.fetch(messageID);
+            if (!message) {
+                console.error("Message not found for crossposting.");
+                return;
+            }
+
+            await message.crosspost();
+            console.log("Message crossposted successfully.");
+        } catch (error) {
+            console.error("Failed to crosspost message: ", error);
+        }
     }
 }
