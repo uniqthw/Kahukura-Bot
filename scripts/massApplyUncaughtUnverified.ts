@@ -44,8 +44,12 @@ client.once("ready", async () => {
                 }
 
                 try {
-                    if (nondryrun) await member.roles.add(role);
-                    console.log(`Added role to: ${member.user.tag}, they are not verified!`);
+                    if (nondryrun) {
+                        await member.roles.add(role);
+                        console.log(`Added role to: ${member.user.tag}, they are not verified!`);
+                    } else {
+                        console.log(`[dry-run] Would add role to: ${member.user.tag}, they are not verified!`);
+                    }
                     if (nondryrun) await new Promise((res) => setTimeout(res, 500)); // 0.5s delay for safety
                 } catch (err) {
                     console.log(`Failed for ${member.user.tag}:`, err);
