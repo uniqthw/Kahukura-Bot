@@ -159,7 +159,7 @@ export default class MessageLoggingHandler {
                 `# ${MessageLogIcons.DELETE} Delete Message`
             ),
             new TextDisplayBuilder().setContent(
-                `-# Deleted at ~<t:${Math.floor(Date.now() / 1000)}:F>.`
+                `-# Deleted at <t:${Math.floor(Date.now() / 1000)}:F>.`
             ),
             new TextDisplayBuilder().setContent(
                 `**Sender:** ${userMention(message.author.id)} [\`${message.author.id}\`]`
@@ -261,7 +261,7 @@ export default class MessageLoggingHandler {
                 `# ${MessageLogIcons.EDIT} Edit Message`
             ),
             new TextDisplayBuilder().setContent(
-                `-# Edited at ~<t:${Math.floor(Date.now() / 1000)}:F>.`
+                `-# Edited at <t:${Math.floor(Date.now() / 1000)}:F>.`
             ),
             new TextDisplayBuilder().setContent(
                 `**Sender:** ${userMention(message.author.id)} [\`${message.author.id}\`]`
