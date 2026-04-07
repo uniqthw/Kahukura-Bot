@@ -92,7 +92,7 @@ export default class InteractionHandler {
             .execute(interaction)
             .then(() => {
                 console.log(
-                    `Sucesfully executed command [/${interaction.commandName}]`,
+                    `Successfully executed command [/${interaction.commandName}]`,
                     {
                         guild: {
                             id: interaction.guildId,
