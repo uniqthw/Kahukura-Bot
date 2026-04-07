@@ -20,7 +20,7 @@ client.once("ready", async () => {
         const guild = await client.guilds.fetch(GUILD_ID);
         await guild.members.fetch(); // Fetch all members
 
-        const role = guild.roles.cache.get(ROLE_ID);
+        const role = await guild.roles.fetch(ROLE_ID).catch(() => null);
         if (!role) {
             console.error("Role not found!");
             process.exit(1);
