@@ -36,10 +36,10 @@
   "packageManager": "pnpm@10.22.0",
   "dependencies": {
     "@types/humanize-duration": "^3.27.4",
-    "@types/nodemailer": "^7.0.3",
-    "discord.js": "^14.24.2",
-    "mongodb": "^7.0.0",
-    "nodemailer": "^7.0.10",
+    "@types/nodemailer": "^8.0.0",
+    "discord.js": "^14.26.2",
+    "mongodb": "^7.1.1",
+    "nodemailer": "^8.0.4",
     "parse-duration-ms": "^0.1.0",
     "pretty-ms": "^9.3.0"
   },
