@@ -255,6 +255,12 @@ export default class MessageLoggingHandler {
         if (!message.guild || !message.channel.isTextBased() || message.partial)
             return;
 
+        // Do not log messageUpdate events where the message content has not been updated.
+        if (message.content === newMessage.content) return;
+
+        // Do not log messageUpdate events where the message does not have any message content either prior to or after being updated.
+        if (!message.content && !newMessage.content) return;
+
         // Build the base text display components
         const textDisplayComponents = [
             new TextDisplayBuilder().setContent(
