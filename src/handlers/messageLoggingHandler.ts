@@ -256,21 +256,26 @@ export default class MessageLoggingHandler {
         >,
         client: Client
     ) {
-        console.log("Received message update event for message ID:", message.id, "with partial status:", message.partial, "and new message partial status", newMessage.partial, "and guild status:", message.inGuild(), newMessage.inGuild(), "and channel type:", message.channel.isTextBased(), "and pin status change:" + message.pinned + "new" + newMessage.pinned);
-
         if (
             !message.inGuild() ||
             !message.channel.isTextBased() ||
-            message.partial ||
-            !newMessage.inGuild() || // This should be impossible if !message.inGuild() evaluates to false, however, TypeScript cannot infer this from the messageUpdate event, so we need to check again for the newMessage.
-            newMessage.partial
+            !newMessage.inGuild() // This should be impossible if !message.inGuild() evaluates to false, however, TypeScript cannot infer this from the messageUpdate event, so we need to check again for the newMessage.
         )
             return;
 
-        if (message.pinned !== newMessage.pinned)
+        if (newMessage.partial) {
+            try {
+                await newMessage.fetch();
+            } catch (error) {
+                console.error("Failed to fetch newMessage in messageUpdate event:", error);
+                return;
+            }
+        }
+
+        if (!message.partial && (message.pinned !== newMessage.pinned))
             return await this.logMessagePin(message, newMessage, client);
 
-        await this.logMessageEdit(message, newMessage, client);
+        if (!message.partial) await this.logMessageEdit(message, newMessage, client);
     }
 
     private async logMessageEdit(

@@ -9,7 +9,9 @@ import {
     Routes,
     ChatInputCommandInteraction,
     AuditLogEvent,
-    User
+    User,
+    Partials,
+    Options
 } from "discord.js";
 import settings from "./utils/settings";
 
@@ -46,7 +48,15 @@ class KahukuraApplication {
                 GatewayIntentBits.GuildModeration,
                 GatewayIntentBits.GuildMessages,
                 GatewayIntentBits.MessageContent
-            ]
+            ],
+            partials: [Partials.Message],
+            makeCache: Options.cacheWithLimits({
+                MessageManager: 500,
+                GuildMemberManager: {
+                    maxSize: 500,
+                    keepOverLimit: (member) => member.id === this.client.user?.id
+                }
+            })
         });
 
         this.interactionHandler = new InteractionHandler();
