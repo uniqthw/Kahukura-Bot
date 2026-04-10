@@ -18,13 +18,17 @@ import settings from "../utils/settings";
 enum MessageLogColours {
     DELETE = 0xdf7d7d,
     EDIT = 0xefc26b,
-    PURGE = 0xa381da
+    PURGE = 0xa381da, // needs updated
+    PINNED = 0xa381da,
+    UNPINNED = 0xcd9bc6
 }
 
 export enum MessageLogIcons {
     DELETE = "<:deletemessage:1439065635723153438>",
     EDIT = "<:editmessage:1439065637938004059>",
-    PURGE = "<:generic:1439025862375768275>"
+    PURGE = "<:generic:1439025862375768275>", // needs updated
+    PINNED = "<:pinnedmessage:1492036599519772692>",
+    UNPINNED = "<:unpinnedmessage:1492036601423859893>"
 }
 
 export default class MessageLoggingHandler {
@@ -252,9 +256,28 @@ export default class MessageLoggingHandler {
         >,
         client: Client
     ) {
-        if (!message.guild || !message.channel.isTextBased() || message.partial)
+        console.log("Received message update event for message ID:", message.id, "with partial status:", message.partial, "and new message partial status", newMessage.partial, "and guild status:", message.inGuild(), newMessage.inGuild(), "and channel type:", message.channel.isTextBased(), "and pin status change:" + message.pinned + "new" + newMessage.pinned);
+
+        if (
+            !message.inGuild() ||
+            !message.channel.isTextBased() ||
+            message.partial ||
+            !newMessage.inGuild() || // This should be impossible if !message.inGuild() evaluates to false, however, TypeScript cannot infer this from the messageUpdate event, so we need to check again for the newMessage.
+            newMessage.partial
+        )
             return;
 
+        if (message.pinned !== newMessage.pinned)
+            return await this.logMessagePin(message, newMessage, client);
+
+        await this.logMessageEdit(message, newMessage, client);
+    }
+
+    private async logMessageEdit(
+        message: Message<true>,
+        newMessage: Message<true>,
+        client: Client
+    ) {
         // Do not log messageUpdate events where the message content has not been updated.
         if (message.content === newMessage.content) return;
 
@@ -290,8 +313,47 @@ export default class MessageLoggingHandler {
             .setAccentColor(MessageLogColours.EDIT)
             .addTextDisplayComponents(...textDisplayComponents);
 
-        const components = [containerBuilder];
+        await this.sendLogMessage([containerBuilder], client);
+    }
 
+    private async logMessagePin(
+        message: Message<true>,
+        newMessage: Message<true>,
+        client: Client
+    ) {
+        // Build the base text display components
+        const textDisplayComponents = [
+            new TextDisplayBuilder().setContent(
+                `# ${newMessage.pinned ? MessageLogIcons.PINNED : MessageLogIcons.UNPINNED} ${newMessage.pinned ? "Pin" : "Unpin"} Message`
+            ),
+            new TextDisplayBuilder().setContent(
+                `-# ${newMessage.pinned ? "Pinned" : "Unpinned"} at <t:${Math.floor(Date.now() / 1000)}:F>.`
+            ),
+            new TextDisplayBuilder().setContent(
+                `**Author:** ${userMention(message.author.id)} [\`${message.author.id}\`]`
+            ),
+            new TextDisplayBuilder().setContent(
+                `**Created at:** <t:${Math.floor(message.createdTimestamp / 1000)}:F>`
+            ),
+            new TextDisplayBuilder().setContent(
+                `**Previously last edited at:** <t:${Math.floor((message.editedTimestamp || message.createdTimestamp) / 1000)}:F>`
+            ),
+            new TextDisplayBuilder().setContent(`${message.url}`)
+        ];
+
+        // Build the container
+        const containerBuilder = new ContainerBuilder()
+            .setAccentColor(
+                newMessage.pinned
+                    ? MessageLogColours.PINNED
+                    : MessageLogColours.UNPINNED
+            )
+            .addTextDisplayComponents(...textDisplayComponents);
+
+        await this.sendLogMessage([containerBuilder], client);
+    }
+
+    private async sendLogMessage(components: [ContainerBuilder], client: Client) {
         const messageLogChannel = await client.channels.fetch(
             settings.discord.channelsID.messageLog
         );
