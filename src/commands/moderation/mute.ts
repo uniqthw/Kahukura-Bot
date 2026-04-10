@@ -11,7 +11,7 @@ import {
 } from "discord.js";
 import parseDuration from "parse-duration-ms";
 
-import ModLoggingHandler from "../../handlers/modLoggingHandler";
+import ModLoggingHandler from "../../handlers/logging/modLoggingHandler";
 const modLoggingHandler = new ModLoggingHandler();
 
 export default class MuteCommand implements Command {

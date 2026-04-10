@@ -20,8 +20,8 @@ import VerificationJoinHandler from "./handlers/verificationJoinHandler";
 import VerificationBanHandler from "./handlers/verificationBanHandler";
 import DirectMessageHandler from "./handlers/directMessageHandler";
 import DynamicCommandHandler from "./handlers/dynamicCommandHandler";
-import MessageLoggingHandler from "./handlers/messageLoggingHandler";
-import ModLoggingHandler from "./handlers/modLoggingHandler";
+import MessageLoggingHandler from "./handlers/logging/messageLoggingHandler";
+import ModLoggingHandler from "./handlers/logging/modLoggingHandler";
 import { ModLogActions } from "../@types";
 
 class KahukuraApplication {

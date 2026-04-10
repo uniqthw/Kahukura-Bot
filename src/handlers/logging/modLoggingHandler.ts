@@ -7,11 +7,11 @@ import {
     TextDisplayBuilder,
     userMention
 } from "discord.js";
-import { ModLogEntry } from "../../@types";
-import MongoDb from "../utils/mongo";
-import { ModLogActions } from "../../@types/index";
+import { ModLogEntry } from "../../../@types";
+import MongoDb from "../../utils/mongo";
+import { ModLogActions } from "../../../@types";
 import prettyMilliseconds from "pretty-ms";
-import settings from "../utils/settings";
+import settings from "../../utils/settings";
 
 enum ModLogColours {
     BAN = 0xdf7d7d,

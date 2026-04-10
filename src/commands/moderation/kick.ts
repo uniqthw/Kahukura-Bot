@@ -9,7 +9,7 @@ import {
     userMention,
     GuildMember
 } from "discord.js";
-import ModLoggingHandler from "../../handlers/modLoggingHandler";
+import ModLoggingHandler from "../../handlers/logging/modLoggingHandler";
 
 const modLoggingHandler = new ModLoggingHandler();
 

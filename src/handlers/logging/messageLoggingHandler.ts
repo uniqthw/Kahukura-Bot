@@ -13,7 +13,7 @@ import {
     User,
     userMention
 } from "discord.js";
-import settings from "../utils/settings";
+import settings from "../../utils/settings";
 
 enum MessageLogColours {
     DELETE = 0xdf7d7d,
