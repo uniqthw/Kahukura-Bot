@@ -18,7 +18,7 @@ import settings from "../utils/settings";
 enum MessageLogColours {
     DELETE = 0xdf7d7d,
     EDIT = 0xefc26b,
-    PURGE = 0xa381da, // needs updated
+    PURGE = 0xf4b47f,
     PINNED = 0xa381da,
     UNPINNED = 0xcd9bc6
 }
@@ -26,7 +26,7 @@ enum MessageLogColours {
 export enum MessageLogIcons {
     DELETE = "<:deletemessage:1439065635723153438>",
     EDIT = "<:editmessage:1439065637938004059>",
-    PURGE = "<:generic:1439025862375768275>", // needs updated
+    PURGE = "<:genericpurge:1492048986180419755>",
     PINNED = "<:pinnedmessage:1492036599519772692>",
     UNPINNED = "<:unpinnedmessage:1492036601423859893>"
 }
