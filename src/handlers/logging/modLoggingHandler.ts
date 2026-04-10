@@ -7,11 +7,11 @@ import {
     TextDisplayBuilder,
     userMention
 } from "discord.js";
-import { ModLogEntry } from "../../@types";
-import MongoDb from "../utils/mongo";
-import { ModLogActions } from "../../@types/index";
+import { ModLogEntry } from "../../../@types";
+import MongoDb from "../../utils/mongo";
+import { ModLogActions } from "../../../@types";
 import prettyMilliseconds from "pretty-ms";
-import settings from "../utils/settings";
+import settings from "../../utils/settings";
 
 enum ModLogColours {
     BAN = 0xdf7d7d,
@@ -20,6 +20,15 @@ enum ModLogColours {
     UNBAN = 0x90ce76,
     UNTIMEOUT = 0x93b8cb,
     GENERIC = 0xa381da
+}
+
+enum ModLogIcons {
+    BAN = "<:ban:1439025860308107264>",
+    KICK = "<:kick:1439025863952830557>",
+    TIMEOUT = "<:timeout:1439025866343452793>",
+    UNBAN = "<:unban:1439025868885459055>",
+    UNTIMEOUT = "<:untimeout:1439025870659391538>",
+    GENERIC = "<:generic:1439025862375768275>"
 }
 
 export default class ModLoggingHandler {
@@ -127,22 +136,22 @@ export default class ModLoggingHandler {
 
         switch (logType) {
             case ModLogActions.BAN:
-                emoji = "<:ban:1439025860308107264>";
+                emoji = ModLogIcons.BAN;
                 break;
             case ModLogActions.KICK:
-                emoji = "<:kick:1439025863952830557>";
+                emoji = ModLogIcons.KICK;
                 break;
             case ModLogActions.TIMEOUT:
-                emoji = "<:timeout:1439025866343452793>";
+                emoji = ModLogIcons.TIMEOUT;
                 break;
             case ModLogActions.UNBAN:
-                emoji = "<:unban:1439025868885459055>";
+                emoji = ModLogIcons.UNBAN;
                 break;
             case ModLogActions.UNTIMEOUT:
-                emoji = "<:untimeout:1439025870659391538>";
+                emoji = ModLogIcons.UNTIMEOUT;
                 break;
             default:
-                emoji = "<:generic:1439025862375768275>";
+                emoji = ModLogIcons.GENERIC;
                 break;
         }
 

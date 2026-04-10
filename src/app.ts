@@ -9,16 +9,19 @@ import {
     Routes,
     ChatInputCommandInteraction,
     AuditLogEvent,
-    User
+    User,
+    Partials,
+    Options
 } from "discord.js";
 import settings from "./utils/settings";
 
 import InteractionHandler from "./handlers/interactionHandler";
 import VerificationJoinHandler from "./handlers/verificationJoinHandler";
 import VerificationBanHandler from "./handlers/verificationBanHandler";
+import DirectMessageHandler from "./handlers/directMessageHandler";
 import DynamicCommandHandler from "./handlers/dynamicCommandHandler";
-import MessageLoggingHandler from "./handlers/messageLoggingHandler";
-import ModLoggingHandler from "./handlers/modLoggingHandler";
+import MessageLoggingHandler from "./handlers/logging/messageLoggingHandler";
+import ModLoggingHandler from "./handlers/logging/modLoggingHandler";
 import { ModLogActions } from "../@types";
 
 class KahukuraApplication {
@@ -27,6 +30,7 @@ class KahukuraApplication {
     private verificationJoinHandler: VerificationJoinHandler;
     private verificationBanHandler: VerificationBanHandler;
     private dynamicCommandHandler: DynamicCommandHandler;
+    private directMessageHandler: DirectMessageHandler;
     private messageLoggingHandler: MessageLoggingHandler;
     private modLoggingHandler: ModLoggingHandler;
     private discordRestClient: REST;
@@ -44,13 +48,22 @@ class KahukuraApplication {
                 GatewayIntentBits.GuildModeration,
                 GatewayIntentBits.GuildMessages,
                 GatewayIntentBits.MessageContent
-            ]
+            ],
+            partials: [Partials.Message],
+            makeCache: Options.cacheWithLimits({
+                MessageManager: 500,
+                GuildMemberManager: {
+                    maxSize: 500,
+                    keepOverLimit: (member) => member.id === this.client.user?.id
+                }
+            })
         });
 
         this.interactionHandler = new InteractionHandler();
         this.verificationJoinHandler = new VerificationJoinHandler();
         this.verificationBanHandler = new VerificationBanHandler();
         this.dynamicCommandHandler = new DynamicCommandHandler();
+        this.directMessageHandler = new DirectMessageHandler();
         this.messageLoggingHandler = new MessageLoggingHandler();
         this.modLoggingHandler = new ModLoggingHandler();
         this.discordRestClient = new REST().setToken(settings.discord.token);
@@ -138,20 +151,6 @@ class KahukuraApplication {
                         error
                     );
                 }
-
-                // Crosspost messages sent in the socials channel that are sent by a webhook.
-            } else if (
-                message.webhookId &&
-                settings.discord.channelsID.socials == message.channel.id
-            ) {
-                try {
-                    await message.crosspost();
-                } catch (error) {
-                    console.error(
-                        "Failed to crosspost message in socials channel: ",
-                        error
-                    );
-                }
             }
         });
 
@@ -225,6 +224,12 @@ class KahukuraApplication {
         });
 
         this.client.on(Events.GuildMemberRemove, async (member) => {
+            // If the user leaves the server, or is kicked, delete the verification message if it still exists.
+            await this.directMessageHandler.deleteOldVerificationMessage(
+                member.user,
+                this.client
+            );
+
             const fetchedLogs = await member.guild.fetchAuditLogs({
                 limit: 1,
                 type: AuditLogEvent.MemberKick

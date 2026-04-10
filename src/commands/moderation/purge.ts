@@ -9,7 +9,7 @@ import {
     InteractionContextType,
     Message
 } from "discord.js";
-import MessageLoggingHandler from "../../handlers/messageLoggingHandler";
+import MessageLoggingHandler from "../../handlers/logging/messageLoggingHandler";
 const messageLoggingHandler = new MessageLoggingHandler();
 
 export default class PurgeCommand implements Command {

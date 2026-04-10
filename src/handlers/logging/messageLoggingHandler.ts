@@ -13,18 +13,22 @@ import {
     User,
     userMention
 } from "discord.js";
-import settings from "../utils/settings";
+import settings from "../../utils/settings";
 
 enum MessageLogColours {
     DELETE = 0xdf7d7d,
     EDIT = 0xefc26b,
-    PURGE = 0xa381da
+    PURGE = 0xf4b47f,
+    PINNED = 0xa381da,
+    UNPINNED = 0xcd9bc6
 }
 
 export enum MessageLogIcons {
     DELETE = "<:deletemessage:1439065635723153438>",
     EDIT = "<:editmessage:1439065637938004059>",
-    PURGE = "<:generic:1439025862375768275>"
+    PURGE = "<:genericpurge:1492048986180419755>",
+    PINNED = "<:pinnedmessage:1492036599519772692>",
+    UNPINNED = "<:unpinnedmessage:1492036601423859893>"
 }
 
 export default class MessageLoggingHandler {
@@ -159,7 +163,7 @@ export default class MessageLoggingHandler {
                 `# ${MessageLogIcons.DELETE} Delete Message`
             ),
             new TextDisplayBuilder().setContent(
-                `-# Deleted at ~<t:${Math.floor(Date.now() / 1000)}:F>.`
+                `-# Deleted at <t:${Math.floor(Date.now() / 1000)}:F>.`
             ),
             new TextDisplayBuilder().setContent(
                 `**Sender:** ${userMention(message.author.id)} [\`${message.author.id}\`]`
@@ -252,8 +256,38 @@ export default class MessageLoggingHandler {
         >,
         client: Client
     ) {
-        if (!message.guild || !message.channel.isTextBased() || message.partial)
+        if (
+            !message.inGuild() ||
+            !message.channel.isTextBased() ||
+            !newMessage.inGuild() // This should be impossible if !message.inGuild() evaluates to false, however, TypeScript cannot infer this from the messageUpdate event, so we need to check again for the newMessage.
+        )
             return;
+
+        if (newMessage.partial) {
+            try {
+                await newMessage.fetch();
+            } catch (error) {
+                console.error("Failed to fetch newMessage in messageUpdate event:", error);
+                return;
+            }
+        }
+
+        if (!message.partial && (message.pinned !== newMessage.pinned))
+            return await this.logMessagePin(message, newMessage, client);
+
+        if (!message.partial) await this.logMessageEdit(message, newMessage, client);
+    }
+
+    private async logMessageEdit(
+        message: Message<true>,
+        newMessage: Message<true>,
+        client: Client
+    ) {
+        // Do not log messageUpdate events where the message content has not been updated.
+        if (message.content === newMessage.content) return;
+
+        // Do not log messageUpdate events where the message does not have any message content either prior to or after being updated.
+        if (!message.content && !newMessage.content) return;
 
         // Build the base text display components
         const textDisplayComponents = [
@@ -261,7 +295,7 @@ export default class MessageLoggingHandler {
                 `# ${MessageLogIcons.EDIT} Edit Message`
             ),
             new TextDisplayBuilder().setContent(
-                `-# Edited at ~<t:${Math.floor(Date.now() / 1000)}:F>.`
+                `-# Edited at <t:${Math.floor(Date.now() / 1000)}:F>.`
             ),
             new TextDisplayBuilder().setContent(
                 `**Sender:** ${userMention(message.author.id)} [\`${message.author.id}\`]`
@@ -284,8 +318,47 @@ export default class MessageLoggingHandler {
             .setAccentColor(MessageLogColours.EDIT)
             .addTextDisplayComponents(...textDisplayComponents);
 
-        const components = [containerBuilder];
+        await this.sendLogMessage([containerBuilder], client);
+    }
 
+    private async logMessagePin(
+        message: Message<true>,
+        newMessage: Message<true>,
+        client: Client
+    ) {
+        // Build the base text display components
+        const textDisplayComponents = [
+            new TextDisplayBuilder().setContent(
+                `# ${newMessage.pinned ? MessageLogIcons.PINNED : MessageLogIcons.UNPINNED} ${newMessage.pinned ? "Pin" : "Unpin"} Message`
+            ),
+            new TextDisplayBuilder().setContent(
+                `-# ${newMessage.pinned ? "Pinned" : "Unpinned"} at <t:${Math.floor(Date.now() / 1000)}:F>.`
+            ),
+            new TextDisplayBuilder().setContent(
+                `**Author:** ${userMention(message.author.id)} [\`${message.author.id}\`]`
+            ),
+            new TextDisplayBuilder().setContent(
+                `**Created at:** <t:${Math.floor(message.createdTimestamp / 1000)}:F>`
+            ),
+            new TextDisplayBuilder().setContent(
+                `**Previously last edited at:** <t:${Math.floor((message.editedTimestamp || message.createdTimestamp) / 1000)}:F>`
+            ),
+            new TextDisplayBuilder().setContent(`${message.url}`)
+        ];
+
+        // Build the container
+        const containerBuilder = new ContainerBuilder()
+            .setAccentColor(
+                newMessage.pinned
+                    ? MessageLogColours.PINNED
+                    : MessageLogColours.UNPINNED
+            )
+            .addTextDisplayComponents(...textDisplayComponents);
+
+        await this.sendLogMessage([containerBuilder], client);
+    }
+
+    private async sendLogMessage(components: [ContainerBuilder], client: Client) {
         const messageLogChannel = await client.channels.fetch(
             settings.discord.channelsID.messageLog
         );
