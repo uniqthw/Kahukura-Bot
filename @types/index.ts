@@ -1,6 +1,6 @@
 // Copyright (C) 2024-2025 The Queer Students' Association of Te Herenga Waka Victoria University of Wellington Incorporated, AGPL-3.0 Licence.
 
-import { ChatInputCommandInteraction, SlashCommandBuilder, Snowflake, User } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, User } from "discord.js";
 import { ObjectId } from "mongodb";
 
 // Defines an interface for the types for command classes
@@ -77,6 +77,5 @@ export enum ModLogActions {
     KICK = "Kick",
     TIMEOUT = "Timeout",
     UNBAN = "Unban",
-    UNTIMEOUT = "Untimeout",
-    WARN = "Warn"
+    UNTIMEOUT = "Untimeout"
 }
