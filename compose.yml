@@ -1,3 +1,5 @@
+name: "kahukura"
+
 services:
   # MongoDB Service
   mongodb:
@@ -9,10 +11,8 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
     volumes:
-      - /opt/kahukurabot/mongodb/data:/data/db
-      - /opt/kahukurabot/mongodb/config:/data/configdb
-    ports:
-      - "127.0.0.1:27017:27017"
+      - ./data/mongo:/data/db
+      - ./data/mongo-config:/data/configdb
     networks:
       - kahukura-network
     healthcheck:
@@ -32,7 +32,7 @@ services:
       mongodb:
         condition: service_healthy
     volumes:
-      - /opt/kahukurabot/settings.json:/app/dist/settings.json:ro
+      - ./data/settings.json:/app/dist/settings.json:ro
     networks:
       - kahukura-network
 

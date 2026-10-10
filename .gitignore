@@ -131,3 +131,5 @@ dist
 
 # Configuration files
 settings.json
+
+data/
